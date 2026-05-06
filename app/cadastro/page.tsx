@@ -1,9 +1,70 @@
 'use client';
 
+import { FormEvent, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
+const emailSuggestions = ['@gmail.com', '@cjr.org.br', '@outlook.com'];
 
 export default function Cadastro() {
+  const router = useRouter();
+  const [nome, setNome] = useState('');
+  const [userName, setUserName] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [confirmSenha, setConfirmSenha] = useState('');
+  const [mensagem, setMensagem] = useState('');
+  const [carregando, setCarregando] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setMensagem('');
+
+    if (!nome || !userName || !email || !senha || !confirmSenha) {
+      setMensagem('Preencha todos os campos.');
+      return;
+    }
+
+    if (senha !== confirmSenha) {
+      setMensagem('As senhas não conferem.');
+      return;
+    }
+
+    setCarregando(true);
+
+    try {
+      const response = await fetch('/api/usuarios', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nome,
+          userName,
+          email,
+          senha_hash: senha,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        if (response.status === 409) {
+          throw new Error('Email já cadastrado. Use outro email ou faça login.');
+        }
+        throw new Error(errorText || 'Erro no cadastro.');
+      }
+
+      setMensagem('Cadastro realizado com sucesso! Redirecionando para login...');
+      setTimeout(() => router.push('/'), 800);
+    } catch (error) {
+      setMensagem(error instanceof Error ? error.message : String(error));
+    } finally {
+      setCarregando(false);
+    }
+  }
+
   return (
     /* Mantendo a estrutura de scroll inteligente e h-screen */
     <main className="min-h-screen h-screen bg-brand-bg flex flex-row-reverse justify-between overflow-y-auto overflow-x-hidden">
@@ -51,27 +112,57 @@ export default function Cadastro() {
             CRIE SUA CONTA
           </h1>
 
-          <form className="flex flex-col gap-4">
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <input
+              value={nome}
+              onChange={(event) => setNome(event.target.value)}
               type="text"
               placeholder="Nome Completo"
               className="w-full bg-brand-input px-6 py-4 rounded-full text-black placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-brand-green transition-all"
             />
 
             <input
+              value={userName}
+              onChange={(event) => setUserName(event.target.value)}
               type="text"
               placeholder="Username"
               className="w-full bg-brand-input px-6 py-4 rounded-full text-black placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-brand-green transition-all"
             />
 
-            <input
-              type="email"
-              placeholder="Email"
-              className="w-full bg-brand-input px-6 py-4 rounded-full text-black placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-brand-green transition-all"
-            />
+            <div className="relative">
+              <input
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                type="email"
+                placeholder="Email"
+                className="w-full bg-brand-input px-6 py-4 rounded-full text-black placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-brand-green transition-all"
+              />
+              {showSuggestions && email.trim() !== '' && (
+                <div className="absolute left-0 top-full z-20 mt-2 w-full overflow-hidden rounded-3xl border border-white/10 bg-brand-dark/95 p-2 shadow-2xl backdrop-blur-md">
+                  {emailSuggestions.map((suggestion) => {
+                    const localPart = email.includes('@') ? email.split('@')[0] : email;
+                    const completedEmail = `${localPart}${suggestion}`;
+                    return (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        onMouseDown={() => setEmail(completedEmail)}
+                        className="w-full rounded-3xl px-4 py-3 text-left text-sm text-white transition hover:bg-white/10"
+                      >
+                        {completedEmail}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
 
             <div className="relative">
               <input
+                value={senha}
+                onChange={(event) => setSenha(event.target.value)}
                 type="password"
                 placeholder="Senha"
                 className="w-full bg-brand-input px-6 py-4 rounded-full text-black placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-brand-green transition-all"
@@ -86,6 +177,8 @@ export default function Cadastro() {
 
             <div className="relative">
               <input
+                value={confirmSenha}
+                onChange={(event) => setConfirmSenha(event.target.value)}
                 type="password"
                 placeholder="Confirmar Senha"
                 className="w-full bg-brand-input px-6 py-4 rounded-full text-black placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-brand-green transition-all"
@@ -102,9 +195,15 @@ export default function Cadastro() {
               type="submit"
               className="w-full bg-brand-primary text-white font-bold text-xl py-4 rounded-full hover:bg-brand-primaryHover transition-all shadow-lg mt-4 uppercase"
             >
-              CRIAR CONTA
+              {carregando ? 'Cadastrando...' : 'CRIAR CONTA'}
             </button>
           </form>
+
+          {mensagem ? (
+            <div className="mt-6 rounded-3xl bg-white/10 p-4 text-sm text-white border border-white/10">
+              {mensagem}
+            </div>
+          ) : null}
 
           <div className="mt-8 text-left text-sm xl:text-base text-gray-300">
             Já possui uma conta?{' '}

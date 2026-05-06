@@ -1,9 +1,68 @@
 'use client';
 
+import { FormEvent, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
+const emailSuggestions = ['@gmail.com', '@cjr.org.br', '@outlook.com'];
 
 export default function Login() {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [mensagem, setMensagem] = useState('');
+  const [carregando, setCarregando] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setMensagem('');
+
+    if (!email || !senha) {
+      setMensagem('Preencha email e senha.');
+      return;
+    }
+
+    setCarregando(true);
+
+    try {
+      const response = await fetch('/api/autenticacao', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, senha }),
+      });
+
+      if (!response.ok) {
+        const contentType = response.headers.get('content-type') ?? '';
+        const errorPayload = contentType.includes('application/json')
+          ? await response.json()
+          : { message: await response.text() };
+
+        if (response.status === 401) {
+          throw new Error('Erro no email ou senha.');
+        }
+
+        throw new Error(errorPayload.message || 'Erro no login.');
+      }
+
+      const data = await response.json();
+      const token = data.token ?? data.accessToken;
+      if (token) {
+        localStorage.setItem('token', token);
+      }
+
+      setMensagem('Login efetuado com sucesso!');
+      router.push('/dashboard');
+    } catch (error) {
+      setMensagem(error instanceof Error ? error.message : String(error));
+    } finally {
+      setCarregando(false);
+    }
+  }
+
   return (
     /* h-screen para o F11, min-h para quando houver scroll */
     <main className="min-h-screen h-screen bg-brand-bg flex justify-between overflow-y-auto overflow-x-hidden">
@@ -51,18 +110,46 @@ export default function Login() {
             BEM VINDO DE VOLTA!
           </h1>
 
-          <form className="flex flex-col gap-6">
-            <input
-              type="email"
-              placeholder="Email"
-              className="w-full bg-brand-input px-6 py-5 rounded-full text-black placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-brand-green transition-all text-lg"
-            />
+          <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+            <div className="relative">
+              <input
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                type="email"
+                placeholder="Email"
+                className="w-full bg-brand-input px-6 py-5 rounded-full text-black placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-brand-green transition-all text-lg"
+                required
+              />
+              {showSuggestions && email.trim() !== '' && (
+                <div className="absolute left-0 top-full z-20 mt-2 w-full overflow-hidden rounded-3xl border border-white/10 bg-brand-dark/95 p-2 shadow-2xl backdrop-blur-md">
+                  {emailSuggestions.map((suggestion) => {
+                    const localPart = email.includes('@') ? email.split('@')[0] : email;
+                    const completedEmail = `${localPart}${suggestion}`;
+                    return (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        onMouseDown={() => setEmail(completedEmail)}
+                        className="w-full rounded-3xl px-4 py-3 text-left text-sm text-white transition hover:bg-white/10"
+                      >
+                        {completedEmail}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
 
             <div className="relative">
               <input
+                value={senha}
+                onChange={(event) => setSenha(event.target.value)}
                 type="password"
                 placeholder="Senha"
                 className="w-full bg-brand-input px-6 py-5 rounded-full text-black placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-brand-green transition-all text-lg"
+                required
               />
               <button type="button" className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
@@ -78,15 +165,20 @@ export default function Login() {
               </Link>
             </div>
 
-            <Link href="/dashboard" className="w-full mt-4">
+            <div className="w-full mt-4">
               <button
-                type="button"
+                type="submit"
                 className="w-full bg-brand-primary text-white font-bold text-xl py-5 rounded-full hover:bg-brand-primaryHover transition-all shadow-lg"
               >
-                ENTRAR
+                {carregando ? 'Entrando...' : 'ENTRAR'}
               </button>
-            </Link>
+            </div>
           </form>
+          {mensagem ? (
+            <div className="mt-6 rounded-3xl bg-white/10 p-4 text-sm text-white border border-white/10">
+              {mensagem}
+            </div>
+          ) : null}
 
           <div className="mt-10 text-left text-base xl:text-lg text-gray-300">
             Não possui uma conta?{' '}
