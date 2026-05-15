@@ -4,6 +4,7 @@ import { FormEvent, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { saveToken } from './actions';
 
 const emailSuggestions = ['@gmail.com', '@cjr.org.br', '@outlook.com'];
 
@@ -53,10 +54,12 @@ export default function Login() {
       const token = data.token ?? data.accessToken;
       if (token) {
         localStorage.setItem('token', token);
+        await saveToken(token)
       }
+      
 
       setMensagem('Login efetuado com sucesso!');
-      router.push('/dashboard');
+      router.push('/');
     } catch (error) {
       setMensagem(error instanceof Error ? error.message : String(error));
     } finally {

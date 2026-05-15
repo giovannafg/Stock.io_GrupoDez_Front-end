@@ -14,3 +14,12 @@ body {
   background-color: var(--color-brand-bg);
   color: #1A1A1A;
 }
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

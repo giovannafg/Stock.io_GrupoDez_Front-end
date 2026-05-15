@@ -2,9 +2,12 @@ import Link from "next/link";
 import PersonIcon from '@/components/icons/iconeLogado.component'
 import iconLogout from '@/components/icons/iconLogout.component'
 import IconLogout from "@/components/icons/iconLogout.component";
+import { cookies, headers } from "next/headers";
 
-export function Navbar(){
-    const session=null  
+export async function Navbar(){
+
+    const cookiesStore=await cookies()
+    const session=cookiesStore.get('token')?.value ?? null
 
     return(
         <div className="absolute top-0 right-0 left-0 bg-black py-2 ">
