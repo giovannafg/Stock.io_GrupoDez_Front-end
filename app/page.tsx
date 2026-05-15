@@ -1,5 +1,6 @@
 
 import Carrossel from "@/components/carrossel.component";
+import LojaCarrossel from "@/components/lojasCarrossel.component";
 import { Navbar } from "@/components/navbar.component";
 import Link from "next/link";
 
@@ -104,18 +105,50 @@ export default function home(){
         loja: "/lojas/cjr.svg",
         estoque: 10
     }
+    
+    ]
+    const lojas= [
+        {
+        nome: "cjr",
+        imagem: "/lojas/cjr.svg",
+        categoria:"mercado"
+        },
+        {
+        nome: "cjr1",
+        imagem: "/lojas/cjr.svg",
+        categoria:"mercado"
+        },
+        {
+        nome: "cjr2",
+        imagem: "/lojas/cjr.svg",
+        categoria:"mercado"
+        },
+        {
+        nome: "cjr3",
+        imagem: "/lojas/cjr.svg",
+        categoria:"mercado"
+        },
+        {
+        nome: "cjr4",
+        imagem: "/lojas/cjr.svg",
+        categoria:"mercado"
+        },
+        {
+        nome: "cjr5",
+        imagem: "/lojas/cjr.svg",
+        categoria:"mercado"
+        },
+
     ]
     return(
         <main>
             <Navbar></Navbar>
             <section className="w-full h-[539px] bg-black flex items-center">
-
-                {/* container central */}
                 <div className="w-full max-w-[2000px] mx-auto flex items-center justify-between">
 
                     {/* texto */}
-                    <div className="w-[55%]  relative  translate-x-[120px]">
-                        <h1 className="text-white text-7xl text-right font-bold">
+                    <div className="w-[55%]  relative  translate-x-[20px]">
+                        <h1 className="text-white text-6xl text-right font-semibold">
                             Do CAOS à organização,
                             <br />
                             em alguns cliques
@@ -123,17 +156,17 @@ export default function home(){
                     </div>
 
                     {/* imagem */}
-                    <div className="w-[30%] flex relative  mt-[380px]  translate-x-[-220px] z-0">
+                    <div className="w-[30%] flex relative  mt-[380px]  translate-x-[-130px] z-0">
                         <img
                             src="Group30.png"
-                            className="w-[700px]"
+                            className="scale-150"
                         />
                     </div>
 
                 </div>
             </section>
             <div className="w-full bg-brand-bg h-auto relative z-10">
-                <div className="px-40 py-10">
+                <div className="px-20 py-10">
                     {/* Procurar */}
                     <section className="pt-2 flex justify-end ">
                         <div className="bg-white rounded-full w-[700px] h-[45px] items-center px-7 flex justify-between">
@@ -147,12 +180,12 @@ export default function home(){
                     </section>
                     {/* Categorias */}
                     <section className="flex flex-col mt-10">
-                        <h2 className="font-bold text-5xl mb-10 ">
+                        <h2 className=" text-5xl mb-10 ">
                             Categoria
                         </h2>
-                        <div className="flex gap-15">
+                        <div className="flex gap-8">
                         {categorias.map((categoria)=>(
-                            <Link key={categoria.nome} href="#" className="bg-white h-[120px] w-[120px] hover:scale-105 transition cursor-pointer rounded-[35px] flex flex-col items-center justify-center gap-2">
+                            <Link key={categoria.nome} href="#" className="bg-white h-[130px] w-[130px] hover:scale-105 transition cursor-pointer rounded-[35px] flex flex-col items-center justify-center gap-2">
                                 {/* <div className="bg-white h-[120px] w-[120px] rounded-[35px] flex flex-col items-center justify-center gap-2"> */}
                                     <img src={categoria.imagem}></img>
                                     <p>{categoria.nome}</p>
@@ -165,11 +198,11 @@ export default function home(){
                     <section>
                          <div className=" flex items-baseline gap-4 mb-10 mt-10">
 
-                            <h2 className="text-5xl font-bold">
+                            <h2 className="text-5xl">
                                 Produtos
                             </h2>
 
-                            <button className="text-2xl font-semibold text-brand-primary">
+                            <button className="font-semibold text-brand-primary">
                                 Melhores avaliados
                             </button>
 
@@ -178,15 +211,52 @@ export default function home(){
                     </section>
                     {/* Mais baratos */}
                     <section>
+                        <div className=" flex items-baseline gap-4 mb-10 mt-10">
 
+                            <h2 className="text-5xl">
+                                Produtos
+                            </h2>
+
+                            <button className="font-semibold text-brand-primary">
+                                Mais Baratos
+                            </button> 
+                        </div>
+                        <Carrossel title="Mais baratos" items={produtos}></Carrossel>
                     </section>
                     {/* Mais recem adicionados */}
                     <section>
+                        <section>
+                        <div className=" flex items-baseline gap-4 mb-10 mt-10">
 
+                            <h2 className="text-5xl">
+                                Produtos
+                            </h2>
+
+                            <button className="font-semibold text-brand-primary">
+                                Recém adicinionados
+                            </button> 
+                        </div>
+                        <Carrossel title="Recem add" items={produtos}></Carrossel>
+                    </section>
                     </section> 
                     {/* Lojas */}
                     <section>
-
+                        <div className="flex flex-row justify-between mt-10 mb-10">
+                            <div>
+                                <h2 className="text-5xl">
+                                    Lojas
+                                </h2>
+                            </div>
+                            <div>
+                                <div className="bg-white rounded-full w-[420px] h-[50px] items-center px-7 flex justify-between">
+                                    <input type="text"
+                                    placeholder="filtros"
+                                    className="text-brand-primary text-2xl outline-none"></input>
+                                </div>
+                            </div>
+                        </div>
+                        {/*Carrossel de lojas*/}
+                        <LojaCarrossel title="carrossel de lojas" items={lojas}></LojaCarrossel>
                     </section>                                       
                 </div>
             </div>
