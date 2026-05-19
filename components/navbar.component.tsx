@@ -10,10 +10,10 @@ export async function Navbar(){
     const session=cookiesStore.get('token')?.value ?? null
 
     return(
-        <div className="absolute top-0 right-0 left-0 bg-black py-2 ">
+        <div className=" top-0 right-0 left-0 bg-black py-2 ">
            <div className=" flex items-center justify-between px-20 py-3">
                 <Link href="/">
-                    <img src="LOGO_header.png" alt="logo" ></img>
+                    <img src="/LOGO_header.png" alt="logo" ></img>
                 </Link>
             {session ? (
                 <div className="flex items-center gap-15">

@@ -14,24 +14,25 @@ interface Props {
   items: Produto[]
 }
 
-export default function LojaCarrossel({ title, items }: Props) {
+export default function LojaCarrossel({ title, items }: Props , ) {
   const [emblaRef] = useEmblaCarousel({ dragFree: true })
 
   return (
+
     <section>
-      <div className="overflow-hidden" ref={emblaRef}>
+      <div className="overflow-hidden mx-25" ref={emblaRef}>
         <div className="flex gap-15 pb-5">
           {items.map((loja) => (
             <Link
               href="#"
               key={loja.nome}
-              className=" flex flex-col items-center hover:scale-101 transition cursor-pointer"
+              className=" flex flex-col items-center hover:scale-101 transition cursor-pointer "
             >
               <div className="">
                 <img src={loja.imagem} className="w-[125px] object-contain" />
               </div>
               <div>
-                <h3 className="mt-1 text-[20px]">
+                <h3 className="mt-1 text-[20px] text-white">
                     {loja.nome}
                 </h3>
               </div>

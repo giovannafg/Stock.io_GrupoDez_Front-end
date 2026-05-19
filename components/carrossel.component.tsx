@@ -8,8 +8,9 @@ interface Produto {
   nome: string
   imagem: string
   loja: string
-  preco: string
+  preco: number
   estoque: number
+  subcategoria: string
 }
 
 interface Props {
@@ -37,8 +38,13 @@ export default function Carrossel({ title, items }: Props) {
                 <img src={produto.imagem} className="w-[180px]" />
               </div>
               <div className="mt-6">
-                <h3 className="text-3xl font-semibold px-5">{produto.nome}</h3>
-                <p className="text-2xl mt-3 px-5">{produto.preco}</p>
+                <h3 className="text-3xl font-semibold px-5">
+                  {produto.nome}</h3>
+                <p className="text-2xl mt-3 px-5">
+                  {typeof produto.preco === 'number'
+                  ? produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                  : produto.preco}
+                  </p>
                 {produto.estoque > 0 ? (
                   <span className="text-[#C6E700] font-bold px-5">DISPONÍVEL</span>
                 ) : (
