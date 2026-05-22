@@ -19,7 +19,6 @@ const categorias = [
 ]
 
 interface Loja {
-  id: number
   nome: string
   imagem: string
   categoria: string
@@ -167,11 +166,11 @@ export default function LojasSection() {
     ]
   const [selecionadas, setSelecionadas] = useState<string[]>([])
 
-  useEffect(() => {
-    fetch('/api/lojas')
-      .then(res => res.json())
-      .then(data => setLojas(data))
-  }, [])
+  // useEffect(() => {
+  //   fetch('/api/lojas')
+  //     .then(res => res.json())
+  //     .then(data => setLojas(data))
+  // }, [])
 
   const lojasFiltradas = selecionadas.length === 0
     ? lojas

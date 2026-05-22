@@ -1,5 +1,6 @@
 import Carrossel from '@/components/carrossel.component';
 import IconVoltar from '@/components/icons/iconVoltar.component';
+import ModalEditarPerfil from '@/components/modals/ModalEditarPerfil';
 import { Navbar } from '@/components/navbar.component';
 import { Link } from 'lucide-react';
 import { cookies } from 'next/headers'
@@ -53,6 +54,23 @@ export default async function PerfilPage() {
         subcategoria: 'Notebooks'
     }
   ]
+  const lojas= [
+        {
+        nome: "cjr",
+        imagem: "/lojas/cjr.svg",
+        categoria:"mercado"
+        },
+        {
+        nome: "cjr1",
+        imagem: "/lojas/cjr.svg",
+        categoria:"farmacia"
+        },
+        {
+        nome: "cjr2",
+        imagem: "/lojas/cjr.svg",
+        categoria:"Brinquedos"
+        }
+      ]
   return (
 
     <main>
@@ -63,8 +81,9 @@ export default async function PerfilPage() {
 
  
       <div className=" px-25 pb-20 relative">
+        
         <div className="relative">
-          
+        
           <div className="relative -mt-30 flex items-center gap-6 ml-10 w-fit">
 
             <a href="/">
@@ -101,30 +120,40 @@ export default async function PerfilPage() {
               <span>✉</span>{usuario.email}
             </p>
           </div>
- 
-          <div className="absolute right-0 top-45">
-            <a
-              href="/perfil/editar"
-              className="bg-brand-primary text-white px-30 py-4 rounded-full  text-2xl hover:opacity-90 transition shadow-lg"
-            >
-              Editar Perfil
-            </a>
-          </div>
+
+          
  
         </div>
         <div className="my-18">
           <h2 className=" text-5xl text-black">Produtos</h2>
         </div>
-        <Carrossel title="Lista de Produtos de tal usuario" items={produtos}></Carrossel>
-        <div className="my-18">
+        <div>
+          <Carrossel title="Lista de Produtos de tal usuario" items={produtos}></Carrossel>
+          
+        </div>
+        <div className="my-18 flex items-center justify-between">
           <h2 className=" text-5xl text-black">Lojas</h2>
+          {/* modal de adicionar loja */}
+          <button className="cursor-pointer" >
+            <img src="\modalAdd.svg" ></img>
+          </button>
         </div>
-        <p>Lojasss</p>
-        <div className="my-18">
-          <h2 className=" text-5xl text-black">Avaliações</h2>
+        <div className="flex flex-wrap gap-10">
+          {lojas.map((loja) => (
+            <div key={loja.nome} className="flex items-center justify-between bg-white rounded-2xl p-8 w-[500px]">
+              <div>
+                <h3 className="font-spartan font-light text-[55.76px]">{loja.nome}</h3>
+                <span className="text-brand-primary font-medium text-[35.15px]">{loja.categoria}</span>
+              </div>
+              <div className="w-[120px] h-[120px] rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                <img src={loja.imagem} className="w-full h-full object-contain" />
+              </div>
+            </div>
+          ))}
         </div>
-        <p>avaliados</p>
+        <ModalEditarPerfil usuario={usuario} token={token}></ModalEditarPerfil>
       </div>
     </main>
   )
 }
+
