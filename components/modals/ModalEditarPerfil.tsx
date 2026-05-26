@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import IconVoltar from "../icons/iconVoltar.component";
 
 type Props = {
   usuario: any
@@ -44,10 +45,10 @@ export default function ModalEditarPerfil( {usuario, token}: Props) {
 
       {open && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-[#EDEDED] h-[802px] w-[654px] rounded-2xl p-8 relative flex flex-col items-center gap-5">
+          <div className="bg-[#EDEDED] h-[700px] w-[500px] rounded-2xl p-8 relative flex flex-col items-center gap-1">
             <button
               onClick={() => setOpen(false)}
-              className="absolute top-4 right-5 text-2xl text-gray-500 hover:text-black transition"
+              className="absolute top-7 right-7 text-6xl text-white hover:text-brand-primaryHover transition cursor-pointer"
             >
               ✕
             </button>
@@ -72,38 +73,38 @@ export default function ModalEditarPerfil( {usuario, token}: Props) {
                 value={nome}
                 onChange={e => setNome(e.target.value)}
                 placeholder="Nome"
-                className="w-[500px] bg-white rounded-full px-5 py-3 text-gray-400  outline-none focus:ring-2 focus:ring-brand-primary"
+                className="w-[400px] bg-white rounded-full px-5 py-3 text-gray-400  outline-none focus:ring-2 focus:ring-brand-primary"
               />
               <input
                 value={userName}
                 onChange={e => setUserName(e.target.value)}
                 placeholder="Username"
-                className="w-[500px] bg-white rounded-full px-5 py-3 text-gray-400 outline-none focus:ring-2 focus:ring-brand-primary"
+                className="w-[400px] bg-white rounded-full px-5 py-3 text-gray-400 outline-none focus:ring-2 focus:ring-brand-primary"
               />
               <input
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="Email"
-                className="w-[500px] bg-white rounded-full px-5 py-3 text-gray-400 outline-none focus:ring-2 focus:ring-brand-primary"
+                className="w-[400px] bg-white rounded-full px-5 py-3 text-gray-400 outline-none focus:ring-2 focus:ring-brand-primary"
               />
             </div>
  
             {/* Botões */}
-            <div className="flex flex-col gap-3 w-full mt-2 items-center">
-              <button className="w-[500px] border border-[#AF052A] text-[#AF052A] text-2xl rounded-full py-3 hover:bg-[#AF052A] hover:text-white transition cursor-pointer">
+            <div className="flex flex-col gap-3 w-full items-center">
+              <button className="w-[400px] border border-[#AF052A] text-[#AF052A] text-2xl rounded-full py-2 hover:bg-[#AF052A] hover:text-white transition cursor-pointer">
                 Deletar conta
               </button>
-              <button className="w-[500px] border border-brand-primary text-brand-primary text-2xl rounded-full py-3 hover:bg-brand-primary hover:text-white transition cursor-pointer"
+              <button className="w-[400px] border border-brand-primary text-brand-primary text-2xl rounded-full py-2 hover:bg-brand-primary hover:text-white transition cursor-pointer"
               onClick={()=>setAba(true)}>
                 Alterar senha
               </button>
               {aba && (
                 <div className="fixed inset-0 bg-black/40 z-[60] flex items-center justify-center">
-                  <div className="bg-[#EDEDED] h-[802px] w-[654px] rounded-2xl p-8 relative flex flex-col items-center ">
+                  <div className="bg-[#EDEDED] h-[700px] w-[500px] rounded-2xl p-8 relative flex flex-col items-center ">
 
                     <button
                       onClick={() => setAba(false)}
-                      className="absolute top-5 right-5 text-3xl"
+                      className="absolute top-7 right-7 text-6xl text-white hover:text-brand-primaryHover transition cursor-pointer"
                     >
                       ✕
                     </button>
@@ -112,7 +113,7 @@ export default function ModalEditarPerfil( {usuario, token}: Props) {
                       onClick={() => setAba(false)}
                       className="absolute top-5 left-5 text-3xl"
                     >
-                      ←
+                      <IconVoltar></IconVoltar>
                     </button>
 
                     <img
@@ -142,7 +143,7 @@ export default function ModalEditarPerfil( {usuario, token}: Props) {
                   </div>
                 </div>
               )}
-              <button className="w-[500px] bg-brand-primary text-white text-2xl rounded-full py-3 font-medium hover:bg-brand-primaryHover transition cursor-pointer">
+              <button className="w-[400px] bg-brand-primary text-white text-2xl rounded-full py-2 font-medium hover:bg-brand-primaryHover transition cursor-pointer">
                 Salvar
               </button>
             </div>

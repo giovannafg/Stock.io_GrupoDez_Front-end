@@ -71,7 +71,7 @@ export default function ProdutosGrid({ categoria, produtosIniciais }: Props) {
   const ordenacaoLabel = ORDENACAO_OPCOES.find(o => o.value === ordenacao)?.label || 'ordenar por'
 
   return (
-    <div className="px-20 py-10">
+    <div className="px-5 py-10">
       {/* Abas + Ordenação */}
       <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
         <div className="flex gap-2 flex-wrap">

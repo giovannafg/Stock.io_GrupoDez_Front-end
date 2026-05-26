@@ -1,8 +1,8 @@
 export default function IconVoltar(){
     return(
         <svg width="36" height="54" viewBox="0 0 36 54" fill="none" xmlns="http://www.w3.org/2000/svg"
-            className="  hover:text-brand-primary cursor-pointer ">
-    <path d="M32.6094 3L4.60938 27L32.6094 51" stroke="white" stroke-width="6" stroke-linecap="round"/>
+            className="stroke-current text-white hover:text-brand-primaryHover cursor-pointer transition">
+    <path d="M32.6094 3L4.60938 27L32.6094 51" strokeWidth="6" strokeLinecap="round"/>
     </svg>
 
     )
