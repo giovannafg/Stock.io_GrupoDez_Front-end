@@ -7,7 +7,8 @@ interface Produto {
   id: number
   nome: string
   imagem: string
-  loja: string
+  loja_nome: string
+  loja_logo: string
   preco: number
   estoque: number
   subcategoria: string
@@ -29,10 +30,10 @@ export default function Carrossel({ title, items }: Props) {
             <Link
               href="#"
               key={produto.nome}
-              className="min-w-[230px] h-[300px] bg-white rounded-2xl flex flex-col relative hover:scale-101 transition cursor-pointer"
+              className="min-w-[230px] h-[340px] bg-white rounded-2xl flex flex-col relative hover:scale-101 transition cursor-pointer"
             >
               <div className="absolute top-4 right-4 z-10">
-                <img src={produto.loja} className="w-[70px] object-contain" />
+                <img src={produto.loja_logo} className="w-[70px] object-contain" />
               </div>
               <div className="flex justify-center items-center h-[160px]">
                 <img src={produto.imagem} className="w-[180px]" />

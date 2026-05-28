@@ -12,52 +12,23 @@ const categorias = [
   "Farmacia",
   "Beleza",
   "Moda",
-  "Eletronicos",
+  "Eletrônicos",
   "Jogos",
   "Brinquedos",
   "Casa"
 ]
+interface LojaCarrosselProps {
+  items: loja[]
+}
 
-interface Loja {
+interface loja {
   nome: string
-  imagem: string
+  logo: string
   categoria: string
 }
-const lojas= [
-        {
-        nome: "cjr",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
-        {
-        nome: "cjr1",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
-        {
-        nome: "cjr2",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
-        {
-        nome: "cjr3",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
-        {
-        nome: "cjr4",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
-        {
-        nome: "cjr5",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
 
-    ]
 // Carrossel
-function LojaCarrossel({ items }: { items: Loja[] }) {
+function LojaCarrossel({ items }: LojaCarrosselProps) {
   const [emblaRef] = useEmblaCarousel({ dragFree: true })
 
   return (
@@ -70,7 +41,7 @@ function LojaCarrossel({ items }: { items: Loja[] }) {
             className="flex flex-col items-center hover:scale-101 transition cursor-pointer"
           >
             <div>
-              <img src={loja.imagem} className="w-[125px] object-contain" />
+              <img src={loja.logo} className="w-[125px] object-contain" />
             </div>
             <h3 className="mt-1 text-[20px]">{loja.nome}</h3>
             <h3 className="text-brand-primary">{loja.categoria}</h3>
@@ -129,52 +100,14 @@ function Filtros({ onChange }: { onChange: (selecionadas: string[]) => void }) {
 }
 
 // Componente principal
-export default function LojasSection() {
-  // const [lojas, setLojas] = useState<Loja[]>([])
-  const lojas= [
-        {
-        nome: "cjr",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
-        {
-        nome: "cjr1",
-        imagem: "/lojas/cjr.svg",
-        categoria:"farmacia"
-        },
-        {
-        nome: "cjr2",
-        imagem: "/lojas/cjr.svg",
-        categoria:"Brinquedos"
-        },
-        {
-        nome: "cjr3",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
-        {
-        nome: "cjr4",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
-        {
-        nome: "cjr5",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
+export default function LojasSection({lojas}: { lojas: loja[] }) {
 
-    ]
   const [selecionadas, setSelecionadas] = useState<string[]>([])
 
-  // useEffect(() => {
-  //   fetch('/api/lojas')
-  //     .then(res => res.json())
-  //     .then(data => setLojas(data))
-  // }, [])
 
   const lojasFiltradas = selecionadas.length === 0
     ? lojas
-    : lojas.filter(loja => selecionadas.includes(loja.categoria.toLowerCase()))
+    : lojas.filter(loja => selecionadas.includes(loja.categoria))
 
   return (
     <section className="mb-30">
@@ -184,7 +117,7 @@ export default function LojasSection() {
           <Filtros onChange={setSelecionadas} />
         </div>
       </div>
-      <LojaCarrossel items={lojasFiltradas} />
+      <LojaCarrossel items ={lojasFiltradas} />
     </section>
   )
 }

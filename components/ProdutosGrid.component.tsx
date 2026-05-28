@@ -18,7 +18,8 @@ interface Produto {
   id: number
   nome: string
   imagem: string
-  loja: string
+  loja_nome: string
+  loja_logo: string
   preco: number | string
   estoque: number
   subcategoria: string
@@ -134,7 +135,7 @@ export default function ProdutosGrid({ categoria, produtosIniciais }: Props) {
             className=" h-[320px] w-[23vh] bg-white rounded-2xl flex flex-col relative hover:scale-101 transition cursor-pointer overflow-hidden"
           >
             <div className="absolute top-4 right-4 z-10">
-              <img src={produto.loja} className="w-[70px] object-contain" />
+              <img src={produto.loja_logo} className="w-[70px] object-contain" />
             </div>
             <div className="flex justify-center items-center h-[160px]">
               <img src={produto.imagem} className="w-[180px]" />

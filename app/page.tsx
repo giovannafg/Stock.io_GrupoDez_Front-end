@@ -1,12 +1,13 @@
 
 import Carrossel from "@/components/carrossel.component";
-import LojasSection from "@/components/filtro.component";
-import Filtros from "@/components/filtro.component";
+import LojasSection from "@/components/LojaCarrosselFiltro";
+import Filtros from "@/components/LojaCarrosselFiltro";
 import LojaCarrossel from "@/components/lojasCarrossel.component";
 import { Navbar } from "@/components/navbar.component";
 import Link from "next/link";
 
-export default function home(){
+
+export default async function  home(){
     const categorias =[
         {
             nome:"Mercado",
@@ -26,7 +27,7 @@ export default function home(){
         },
         {
             nome:"Eletrônicos",
-            imagem: "categorias/eletronicos.svg"
+            imagem: "categorias/eletrônicos.svg"
         },
         {
             nome:"Jogos",
@@ -42,82 +43,18 @@ export default function home(){
         },
     ]
 
-    const produtos = [
-    {
-        id: 1,
-        nome: "Brownie",
-        preco:  4.70,
-        imagem: "/produtos/brownie.svg",
-        loja: "/lojas/cjr.svg",
-        estoque: 12,
-        subcategoria: 'Notebooks'
-    },
-    {
-        id: 2,
-        nome: "Mouse Gamer",
-        preco: 120,
-        imagem: "/produtos/mouse.png",
-        loja: "/lojas/cjr.svg",
-        estoque: 0,
-        subcategoria: 'Notebooks'
-    },
-    {
-        id: 3,
-        nome: "Headset",
-        preco: 250,
-        imagem: "/produtos/headset.png",
-        loja: "/lojas/cjr.svg",
-        estoque: 10,
-        subcategoria: 'Notebooks'
-    },
-    {
-        id: 4,
-        nome: "Teclado",
-        preco: 180,
-        imagem: "/produtos/teclado.svg ",
-        loja: "/lojas/cjr.svg",
-        estoque: 10,
-        subcategoria: 'Notebooks'
-    },
-    {
-        id: 5,
-        nome: "Headset1",
-        preco: 250,
-        imagem: "/produtos/headset.png",
-        loja: "/lojas/cjr.svg",
-        estoque: 10,
-        subcategoria: 'Notebooks'
-    },
-        {
-        id: 6,
-        nome: "Headset2",
-        preco: 250,
-        imagem: "/produtos/headset.png",
-        loja: "/lojas/cjr.svg",
-        estoque: 10,
-        subcategoria: 'Notebooks'
-    },
-        {
-        id: 7,
-        nome: "Headset3",
-        preco: 250,
-        imagem: "/produtos/headset.png",
-        loja: "/lojas/cjr.svg",
-        estoque: 10,
-        subcategoria: 'Notebooks'
-    },
-        {
-        id: 8,
-        nome: "Headset4",
-        preco: 250,
-        imagem: "/produtos/headset.png",
-        loja: "/lojas/cjr.svg",
-        estoque: 10,
-        subcategoria: 'Notebooks'
-    }
-    
-    ]
-    
+    const produtosMaisBaratos = await fetch(
+        'http://localhost:3001/produtos/menor-preco'
+    ).then(res => res.json())
+
+    const produtosRecemAdd = await fetch(
+        'http://localhost:3001/produtos/recem-add'
+    ).then(res => res.json())
+
+    const lojas = await fetch(
+        'http://localhost:3001/lojas'
+    ).then(res => res.json())
+
     return(
         <main>
             <Navbar></Navbar>
@@ -173,7 +110,7 @@ export default function home(){
                         </div>
                     </section>
                     {/* Melhores avaliados */}
-                    <section>
+                    {/* <section>
                          <div className=" flex items-baseline gap-4 mb-10 mt-10">
 
                             <h2 className="text-5xl text-black">
@@ -186,7 +123,8 @@ export default function home(){
 
                         </div>
                         <Carrossel title="Mais Avaliados" items={produtos}></Carrossel>
-                    </section>
+                    </section> */}
+
                     {/* Mais baratos */}
                     <section>
                         <div className=" flex items-baseline gap-4 mb-10 mt-10">
@@ -199,7 +137,7 @@ export default function home(){
                                 Mais Baratos
                             </button> 
                         </div>
-                        <Carrossel title="Mais baratos" items={produtos}></Carrossel>
+                        <Carrossel title="Mais baratos" items={produtosMaisBaratos}></Carrossel>
                     </section>
                     {/* Mais recem adicionados */}
                     <section>
@@ -214,13 +152,13 @@ export default function home(){
                                 Recém adicinionados
                             </button> 
                         </div>
-                        <Carrossel title="Recem add" items={produtos}></Carrossel>
+                        <Carrossel title="Recem add" items={produtosRecemAdd}></Carrossel>
                     </section>
                     </section> 
                     {/* Lojas */}
                     <section className="mb-30">
 
-                        <LojasSection></LojasSection>
+                        <LojasSection lojas={lojas}></LojasSection>
                         {/*Carrossel de lojas*/}
                             {/* <LojaCarrossel title="carrossel de lojas" items={lojas}></LojaCarrossel> */}
                     </section>                                       
