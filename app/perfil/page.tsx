@@ -6,6 +6,12 @@ import { Link } from 'lucide-react';
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
+interface Loja {
+  nome: string;
+  logo: string;
+  categoria: string;
+}
+
 export default async function PerfilPage() {
   const cookieStore = await cookies()
   const token = cookieStore.get('token')?.value
@@ -23,54 +29,17 @@ export default async function PerfilPage() {
     console.log('resposta:', text)}
 
   const usuario = await res.json()
-  console.log('usuario:', usuario)
+  // console.log('usuario:', usuario)
+  
+  const usuarioId = usuario.id
+  const lojasUser = await fetch(`http://localhost:3001/lojas/usuario/${usuarioId}`)
+  .then(res => res.ok ? res.json() : [])
+  .catch(() => [])
 
-  const produtos = [
-    {
-        id: 1,
-        nome: "Brownie",
-        preco:  4.70,
-        imagem: "/produtos/brownie.svg",
-        loja: "/lojas/cjr.svg",
-        estoque: 12,
-        subcategoria: 'Notebooks'
-    },
-    {
-        id: 2,
-        nome: "Mouse Gamer",
-        preco: 120,
-        imagem: "/produtos/mouse.png",
-        loja: "/lojas/cjr.svg",
-        estoque: 0,
-        subcategoria: 'Notebooks'
-    },
-    {
-        id: 3,
-        nome: "Headset",
-        preco: 250,
-        imagem: "/produtos/headset.png",
-        loja: "/lojas/cjr.svg",
-        estoque: 10,
-        subcategoria: 'Notebooks'
-    }
-  ]
-  const lojas= [
-        {
-        nome: "cjr",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
-        {
-        nome: "cjr1",
-        imagem: "/lojas/cjr.svg",
-        categoria:"farmacia"
-        },
-        {
-        nome: "cjr2",
-        imagem: "/lojas/cjr.svg",
-        categoria:"Brinquedos"
-        }
-      ]
+  const produtosUser = await fetch(`http://localhost:3001/produtos/usuario/${usuarioId}`)
+  .then(res => res.ok ? res.json() : [])
+  .catch(() => [])
+
   return (
 
     <main>
@@ -128,7 +97,7 @@ export default async function PerfilPage() {
           <h2 className=" text-5xl text-black">Produtos</h2>
         </div>
         <div>
-          <Carrossel title="Lista de Produtos de tal usuario" items={produtos}></Carrossel>
+          <Carrossel title="Lista de Produtos de tal usuario" items={produtosUser}></Carrossel>
           
         </div>
         <div className="my-18 flex items-center justify-between">
@@ -139,14 +108,14 @@ export default async function PerfilPage() {
           </button>
         </div>
         <div className="flex flex-wrap gap-10">
-          {lojas.map((loja) => (
+          {lojasUser.map((loja: Loja) => (
             <div key={loja.nome} className="flex items-center justify-between bg-white rounded-2xl p-8 w-[500px]">
               <div>
                 <h3 className="font-spartan font-light text-[55.76px]">{loja.nome}</h3>
                 <span className="text-brand-primary font-medium text-[35.15px]">{loja.categoria}</span>
               </div>
               <div className="w-[120px] h-[120px] rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                <img src={loja.imagem} className="w-full h-full object-contain" />
+                <img src={`/lojas/${loja.logo}`} className="w-full h-full object-contain" />
               </div>
             </div>
           ))}

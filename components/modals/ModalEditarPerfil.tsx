@@ -16,24 +16,78 @@ export default function ModalEditarPerfil( {usuario, token}: Props) {
   const [nome, setNome] = useState(usuario.nome ?? '')
   const [userName, setUserName] = useState(usuario.userName ?? '')
   const [email, setEmail] = useState(usuario.email ?? '')
-
-
   const [aba, setAba]= useState(false)
-  // async function handleSalvar() {
-  //   const res = await fetch('http://localhost:3001/perfil', {
-  //     method: 'PATCH',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       Authorization: `Bearer ${token}`
-  //     },
-  //     body: JSON.stringify({ nome, userName, email })
-  //   })
 
-  //   if (res.ok) {
-  //     setOpen(false)
-  //     window.location.reload() // atualiza a página com os novos dados
-  //   }
-  // }
+  const [senhaAntiga, setSenhaAntiga] = useState('')
+  const [novaSenha, setNovaSenha] = useState('')
+  const [confirmarSenha, setConfirmarSenha] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [erro, setErro] = useState('')
+
+  async function Salvar() {
+    console.log(usuario.id, nome, userName, email,token)
+    setLoading(true)
+    setErro('')
+    try{
+      const res = await fetch(`http://localhost:3001/usuarios/${usuario.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ nome, userName, email })
+      })
+      if (!res.ok) {        
+        const data = await res.json()
+        throw new Error(data.message || 'Erro ao salvar as alterações')
+      } else {
+        window.location.reload()
+      }
+    } catch (error) {
+      setErro('Erro de conexao')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function AlterarSenha() {
+    if (novaSenha !== confirmarSenha) return setErro('As senhas não coincidem')
+    setLoading(true)
+    setErro('')
+    try{
+      const res=await fetch('http://localhost:3001/usuarios/${usuario.id}', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ senhaAntiga, novaSenha })
+      })
+      if (!res.ok) {        
+        const data = await res.json()
+        throw new Error(data.message || 'Erro ao alterar a senha')
+      }
+    } catch (error) {
+      setErro('Erro de conexao')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function DeletarConta() {
+    if (!confirm('Tem certeza que deseja deletar sua conta? Essa ação não pode ser desfeita.')) return
+    const res =await fetch(`http://localhost:3001/usuarios/${usuario.id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    })
+    if (res.ok) {
+      window.location.href = '/logout'
+    } else {
+      alert('Erro ao deletar a conta')
+    }
+  }
 
   return (
     <>
@@ -66,9 +120,11 @@ export default function ModalEditarPerfil( {usuario, token}: Props) {
                 <img src="/camera.png"></img>
               </button>
             </div>
+
+            {erro && <p className="text-red-500 relative absolute top-5 m-0 p-0">{erro}</p>}
  
             {/* Inputs */}
-            <div className="flex flex-col gap-5 w-full items-center my-10">
+            <div className="flex flex-col gap-5 w-full items-center mb-10 mt-5">
               <input
                 value={nome}
                 onChange={e => setNome(e.target.value)}
@@ -91,7 +147,8 @@ export default function ModalEditarPerfil( {usuario, token}: Props) {
  
             {/* Botões */}
             <div className="flex flex-col gap-3 w-full items-center">
-              <button className="w-[400px] border border-[#AF052A] text-[#AF052A] text-2xl rounded-full py-2 hover:bg-[#AF052A] hover:text-white transition cursor-pointer">
+              <button className="w-[400px] border border-[#AF052A] text-[#AF052A] text-2xl rounded-full py-2 hover:bg-[#AF052A] hover:text-white transition cursor-pointer"
+              onClick={DeletarConta}>
                 Deletar conta
               </button>
               <button className="w-[400px] border border-brand-primary text-brand-primary text-2xl rounded-full py-2 hover:bg-brand-primary hover:text-white transition cursor-pointer"
@@ -120,30 +177,48 @@ export default function ModalEditarPerfil( {usuario, token}: Props) {
                       src="\uim_key-skeleton.png"
                       className="w-40 mt-10"
                     />
+                    {erro && <p className="text-red-500">{erro}</p>}
+
                     <div className="flex flex-col gap-5 mt-10 w-full items-center">
 
                       <input
                         placeholder="Senha Antiga"
                         className="w-[350px] bg-white rounded-full px-5 py-3 outline-none"
+                        value={senhaAntiga}
+                        onChange={e => setSenhaAntiga(e.target.value)}
+                        type="password"
+
                       />
                       <input
                         placeholder="Nova Senha"
                         className="w-[350px] bg-white rounded-full px-5 py-3 outline-none"
+                        value={novaSenha}
+                        onChange={e => setNovaSenha(e.target.value)}
+                        type="password"
                       />
                       <input
                         placeholder="Confirmar Senha"
                         className="w-[350px] bg-white rounded-full px-5 py-3 outline-none"
+                        value={confirmarSenha}
+                        onChange={e => setConfirmarSenha(e.target.value)}
+                        type="password"
                       />
                     </div>
 
-                    <button className="w-[350px] mt-16 bg-brand-primary text-white rounded-full py-3 text-2xl">
+                    <button className="w-[350px] mt-16 bg-brand-primary text-white rounded-full py-3 text-2xl"
+                    onClick={AlterarSenha}
+                    disabled={loading}
+                    // {loading ? 'salvando...' : 'salvar senha'}
+                    >
                       Salvar Senha
                     </button>
 
                   </div>
                 </div>
               )}
-              <button className="w-[400px] bg-brand-primary text-white text-2xl rounded-full py-2 font-medium hover:bg-brand-primaryHover transition cursor-pointer">
+              <button className="w-[400px] bg-brand-primary text-white text-2xl rounded-full py-2 font-medium hover:bg-brand-primaryHover transition cursor-pointer"
+              onClick={Salvar}
+              disabled={loading}>
                 Salvar
               </button>
             </div>
