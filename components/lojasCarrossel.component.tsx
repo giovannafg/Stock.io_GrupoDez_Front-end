@@ -3,15 +3,17 @@
 import useEmblaCarousel from 'embla-carousel-react'
 import Link from 'next/link'
 
-interface Produto {
+interface loja {
+  id: number
   nome: string
-  imagem: string
+  logo: string
   categoria: string
+  descricao: string 
 }
 
 interface Props {
   title: string
-  items: Produto[]
+  items: loja[]
 }
 
 export default function LojaCarrossel({ title, items }: Props , ) {
@@ -25,11 +27,11 @@ export default function LojaCarrossel({ title, items }: Props , ) {
           {items.map((loja) => (
             <Link
               href="#"
-              key={loja.nome}
+              key={loja.id}
               className=" flex flex-col items-center hover:scale-101 transition cursor-pointer "
             >
               <div className="">
-                <img src={loja.imagem} className="w-[125px] object-contain" />
+                <img src={`/lojas/${loja.logo}`} className="w-[125px] object-contain" />
               </div>
               <div>
                 <h3 className="mt-1 text-[20px] text-white">

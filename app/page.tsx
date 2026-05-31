@@ -11,49 +11,60 @@ export default async function  home(){
     const categorias =[
         {
             nome:"Mercado",
+            value: "Mercado",
             imagem: "categorias/mercado.svg"
         },
         {
             nome:"Farmácia",
+            value: "Farmacia",
             imagem: "categorias/farmacia.svg"
         },
         {
             nome:"Beleza",
+            value: "Beleza",
             imagem: "categorias/beleza.svg"
         },
         {
             nome:"Moda",
+            value: "Moda",
             imagem: "categorias/moda.svg"
         },
         {
             nome:"Eletrônicos",
-            imagem: "categorias/eletrônicos.svg"
+            value: "Eletronicos",
+            imagem: "categorias/eletronicos.svg"
         },
         {
             nome:"Jogos",
+            value: "Jogos",
             imagem: "categorias/jogos.svg"
         },
         {
             nome:"Brinquedos",
+            value: "Brinquedos",
             imagem: "categorias/brinquedos.svg"
         },
         {
             nome:"Casa",
+            value: "Casa",
             imagem: "categorias/casa.svg"
         },
     ]
 
     const produtosMaisBaratos = await fetch(
         'http://localhost:3001/produtos/menor-preco'
-    ).then(res => res.json())
+    ).then(res => res.ok ? res.json() : [])
+    .catch(() => [])
 
     const produtosRecemAdd = await fetch(
         'http://localhost:3001/produtos/recem-add'
-    ).then(res => res.json())
+    ).then(res => res.ok ? res.json() : [])
+    .catch(() => [])
 
     const lojas = await fetch(
         'http://localhost:3001/lojas'
-    ).then(res => res.json())
+    ).then(res => res.ok ? res.json() : [])
+    .catch(() => [])
 
     return(
         <main>
@@ -100,7 +111,7 @@ export default async function  home(){
                         </h2>
                         <div className="flex gap-8">
                         {categorias.map((categoria)=>(
-                            <Link key={categoria.nome} href={`/categoria/${categoria.nome}`} className="bg-white h-[130px] w-[130px] hover:scale-105 transition cursor-pointer rounded-[35px] flex flex-col items-center justify-center gap-2">
+                            <Link key={categoria.nome} href={`/categoria/${categoria.value}`} className="bg-white h-[130px] w-[130px] hover:scale-105 transition cursor-pointer rounded-[35px] flex flex-col items-center justify-center gap-2">
                                 {/* <div className="bg-white h-[120px] w-[120px] rounded-[35px] flex flex-col items-center justify-center gap-2"> */}
                                     <img src={categoria.imagem}></img>
                                     <p>{categoria.nome}</p>

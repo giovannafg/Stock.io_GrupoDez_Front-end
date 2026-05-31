@@ -3,12 +3,11 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-const SUBCATEGORIAS_FIXAS = ['Celulares', 'Notebooks', 'TVs', 'Acessórios']
 
 const ORDENACAO_OPCOES = [
   { label: 'Menor preço', value: 'preco_asc' },
   { label: 'Maior preço', value: 'preco_desc' },
-  { label: 'Mais avaliados', value: 'avaliacao' },
+  // { label: 'Mais avaliados', value: 'avaliacao' },
   { label: 'Mais recentes', value: 'recente' },
 ]
 
@@ -25,8 +24,13 @@ interface Produto {
   subcategoria: string
 }
 
+interface Subcategoria {
+  id: number
+  nome: string
+}
+
 interface Props {
-  categoria: string
+  subcategorias: Subcategoria[]
   produtosIniciais: Produto[]
 }
 
@@ -34,22 +38,22 @@ function ordenarProdutos(produtos: Produto[], ordem: string): Produto[] {
   switch (ordem) {
     case 'preco_asc':  return [...produtos].sort((a, b) => Number(a.preco) - Number(b.preco))
     case 'preco_desc': return [...produtos].sort((a, b) => Number(b.preco) - Number(a.preco))
-    case 'recente':    return [...produtos].reverse()
+    case 'recente':    return [...produtos]
     default:           return produtos
   }
 }
 
-export default function ProdutosGrid({ categoria, produtosIniciais }: Props) {
+export default function ProdutosGrid({ subcategorias, produtosIniciais }: Props) {
   const [subcategoria, setSubcategoria] = useState('Todos')
   const [ordenacao, setOrdenacao] = useState('')
   const [ordenacaoAberta, setOrdenacaoAberta] = useState(false)
   const [pagina, setPagina] = useState(1)
-
+  // console.log( produtosIniciais[0])
   const produtosFiltrados = (() => {
     let lista = produtosIniciais
 
     if (subcategoria === 'Outros') {
-      lista = lista.filter(p => !SUBCATEGORIAS_FIXAS.includes(p.subcategoria))
+      lista = lista.filter(p => !subcategorias.map(s => s.nome).includes(p.subcategoria))
     } else if (subcategoria !== 'Todos') {
       lista = lista.filter(p => p.subcategoria === subcategoria)
     }
@@ -68,7 +72,7 @@ export default function ProdutosGrid({ categoria, produtosIniciais }: Props) {
     setPagina(1)
   }
 
-  const abas = ['Todos', ...SUBCATEGORIAS_FIXAS, 'Outros']
+  const abas = ['Todos', ...subcategorias.map(sub=>sub.nome), 'Outros']
   const ordenacaoLabel = ORDENACAO_OPCOES.find(o => o.value === ordenacao)?.label || 'ordenar por'
 
   return (
@@ -132,20 +136,21 @@ export default function ProdutosGrid({ categoria, produtosIniciais }: Props) {
           <Link
             href={`/produto/${produto.id}`}
             key={produto.id}
-            className=" h-[320px] w-[23vh] bg-white rounded-2xl flex flex-col relative hover:scale-101 transition cursor-pointer overflow-hidden"
+            className=" h-[320px] w-[28vh] bg-white rounded-2xl flex flex-col relative hover:scale-101 transition cursor-pointer overflow-hidden"
           >
             <div className="absolute top-4 right-4 z-10">
-              <img src={produto.loja_logo} className="w-[70px] object-contain" />
+              <img src={`/lojas/${produto.loja_logo}`} className="w-[70px] object-contain" />
             </div>
             <div className="flex justify-center items-center h-[160px]">
-              <img src={produto.imagem} className="w-[180px]" />
+              <img src={`/produtos/${produto.imagem}`} className="w-[180px]" />
             </div>
             <div className="mt-6">
               <h3 className="text-3xl font-semibold px-5">{produto.nome}</h3>
               <p className="text-2xl mt-2 px-5">
-                {typeof produto.preco === 'number'
-                ? produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-                : produto.preco}
+                {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                  }).format(Number(produto.preco))}
               </p>
               {produto.estoque > 0 ? (
                 <span className="text-[#C6E700] font-bold px-5">DISPONÍVEL</span>

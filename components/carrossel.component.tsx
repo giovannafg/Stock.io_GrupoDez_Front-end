@@ -33,18 +33,19 @@ export default function Carrossel({ title, items }: Props) {
               className="min-w-[230px] h-[340px] bg-white rounded-2xl flex flex-col relative hover:scale-101 transition cursor-pointer"
             >
               <div className="absolute top-4 right-4 z-10">
-                <img src={produto.loja_logo} className="w-[70px] object-contain" />
+                <img src={`/lojas/${produto.loja_logo}`} className="w-[70px] object-contain" />
               </div>
               <div className="flex justify-center items-center h-[160px]">
-                <img src={produto.imagem} className="w-[180px]" />
+                <img src={`/produtos/${produto.imagem}`} className="w-[180px]" />
               </div>
               <div className="mt-6">
                 <h3 className="text-3xl font-semibold px-5">
                   {produto.nome}</h3>
                 <p className="text-2xl mt-3 px-5">
-                  {typeof produto.preco === 'number'
-                  ? produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-                  : produto.preco}
+                  {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                  }).format(Number(produto.preco))}
                   </p>
                 {produto.estoque > 0 ? (
                   <span className="text-[#C6E700] font-bold px-5">DISPONÍVEL</span>

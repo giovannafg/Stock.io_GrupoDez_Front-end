@@ -18,140 +18,24 @@ interface Produto {
   subcategoria: string
 }
 
-const SUBCATEGORIAS_FIXAS = ['Celulares', 'Notebooks', 'TVs', 'Acessórios']
-
-const ORDENACAO_OPCOES = [
-  { label: 'Menor preço', value: 'preco_asc' },
-  { label: 'Maior preço', value: 'preco_desc' },
-  { label: 'Mais avaliados', value: 'avaliacao' },
-  { label: 'Mais recentes', value: 'recente' },
-]
-
-const PRODUTOS_POR_PAGINA = 15
-
-function ordenarProdutos(produtos: Produto[], ordem: string): Produto[]{
-    switch (ordem){
-        case 'preco_asc':  return [...produtos].sort((a, b) => a.preco - b.preco)
-        case 'preco_desc': return [...produtos].sort((a, b) => b.preco - a.preco)
-        case 'avaliacao':  return [...produtos] 
-        case 'recente':    return [...produtos].reverse()
-        default:           return produtos
-    }
-}
 
 export default async function CategoriaPage({params}:Props){
     const {slug}= await params
-    // const res=await fetch(`http://localhost:3000/api/produtos?categoria=${slug}`)
-    // const produtosLista= await res.json()
 
-        const lojas= [
-        {
-        nome: "cjr",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
-        {
-        nome: "cjr1",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
-        {
-        nome: "cjr2",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
-        {
-        nome: "cjr3",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
-        {
-        nome: "cjr4",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
-        {
-        nome: "cjr5",
-        imagem: "/lojas/cjr.svg",
-        categoria:"mercado"
-        },
+    const produtosCategoriaLista=await fetch(`http://localhost:3000/api/produtos/categoria/${slug}`)
+    .then(res=>res.json())
+    console.log(produtosCategoriaLista)
 
-    ]
-    const produtosList = [
-    {
-        id: 1,
-        nome: "Brownie",
-        preco:  4.70,
-        imagem: "/produtos/brownie.svg",
-        loja: "/lojas/cjr.svg",
-        estoque: 12,
-        subcategoria: 'Notebooks'
-    },
-    {
-        id: 2,
-        nome: "Mouse Gamer",
-        preco: 120.00,
-        imagem: "/produtos/mouse.png",
-        loja: "/lojas/cjr.svg",
-        estoque: 0,
-        subcategoria: 'Celulares'
-    },
-    {
-        id: 3,
-        nome: "Headset",
-        preco: 250,
-        imagem: "/produtos/headset.png",
-        loja: "/lojas/cjr.svg",
-        estoque: 10,
-        subcategoria: 'TVs'
-    },
-    {
-        id: 4,
-        nome: "Teclado",
-        preco: 180,
-        imagem: "/produtos/teclado.svg ",
-        loja: "/lojas/cjr.svg",
-        estoque: 10,
-        subcategoria: 'Notebooks'
-    },
-    {
-        id: 5,
-        nome: "Headset1",
-        preco: 250,
-        imagem: "/produtos/headset.png",
-        loja: "/lojas/cjr.svg",
-        estoque: 10,
-        subcategoria: 'Notebooks'
-    },
-        {
-        id: 6,
-        nome: "Headset2",
-        preco: 250,
-        imagem: "/produtos/headset.png",
-        loja: "/lojas/cjr.svg",
-        estoque: 10,
-        subcategoria: 'Notebooks'
-    },
-        {
-        id: 7,
-        nome: "Headset3",
-        preco: 250,
-        imagem: "/produtos/headset.png",
-        loja: "/lojas/cjr.svg",
-        estoque: 10,
-        subcategoria: 'Notebooks'
-    },
-        {
-        id: 8,
-        nome: "Headset4",
-        preco: 250,
-        imagem: "/produtos/headset.png",
-        loja: "/lojas/cjr.svg",
-        estoque: 10,
-        subcategoria: 'Notebooks'
-    }
-    
-    ]
+    const lojas = await fetch(`http://localhost:3001/lojas/categoria/${slug}`)
+    .then(res => res.json())
+
+    const produtosDisponiveis = produtosCategoriaLista.filter((produto: Produto) => produto.estoque > 0)
+
+    const subcategorias= await fetch(`http://localhost:3000/api/produtos/subcategorias/${slug}`)
+    .then(res=>res.json())
+
+    // console.log('Subcategorias únicas:', subcategorias)
+
     
     return(
         
@@ -195,11 +79,12 @@ export default async function CategoriaPage({params}:Props){
                         </section>
                         {/* Tipos e as abas de produtos */}
                         <section className="mt-4">
-                            <ProdutosGrid categoria={slug} produtosIniciais={produtosList}></ProdutosGrid>
+                            <ProdutosGrid subcategorias={subcategorias} produtosIniciais={produtosCategoriaLista}></ProdutosGrid>
                         </section>
                     </div>    
                 </div>
                         {/* Principais lojas de categoria especifica */}
+                        
                 <section>
                     <div className="bg-black p-10">
                         <div>
@@ -211,15 +96,16 @@ export default async function CategoriaPage({params}:Props){
                     </div>
                 </section>
                 {/* Principais produtos de categoria especifica */}
+                {/* Nao tem, ent troquei por disponiveis */}
                 <section className="bg-brand-bg w-full">
                     <div className="px-20 py-10 m-10">
-                        <h2 className="text-5xl text-black mb-10 font-medium">Mais Populares</h2>
-                        <Carrossel title="Carrossel principais produtos de dada categoria" items={produtosList}></Carrossel>
+                        <h2 className="text-5xl text-black mb-10 font-medium">Disponíveis</h2>
+                        <Carrossel title="Carrossel produtos disponiveis de cada categoria" items={produtosDisponiveis}></Carrossel>
                     </div>
                 {/* recem adicionados de categoria especifica */}   
                     <div className="px-20 py-10 m-10">
                         <h2 className="text-5xl text-black mb-10 font-medium">Recém adicionados </h2>
-                        <Carrossel title="Carrossel principais produtos de dada categoria" items={produtosList}></Carrossel>
+                        <Carrossel title="Carrossel principais produtos de dada categoria" items={produtosCategoriaLista}></Carrossel>
                     </div>
                 </section>
 

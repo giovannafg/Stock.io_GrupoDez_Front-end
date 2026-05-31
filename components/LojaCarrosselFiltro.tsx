@@ -8,11 +8,11 @@ import Link from 'next/link'
 import { ChevronUp } from 'lucide-react'
 
 const categorias = [
-  "mercado",
+  "Mercado",
   "Farmacia",
   "Beleza",
   "Moda",
-  "Eletrônicos",
+  "Eletronicos",
   "Jogos",
   "Brinquedos",
   "Casa"
@@ -41,7 +41,7 @@ function LojaCarrossel({ items }: LojaCarrosselProps) {
             className="flex flex-col items-center hover:scale-101 transition cursor-pointer"
           >
             <div>
-              <img src={loja.logo} className="w-[125px] object-contain" />
+              <img src={`lojas/${loja.logo}`} className="w-[125px] object-contain" />
             </div>
             <h3 className="mt-1 text-[20px]">{loja.nome}</h3>
             <h3 className="text-brand-primary">{loja.categoria}</h3>
