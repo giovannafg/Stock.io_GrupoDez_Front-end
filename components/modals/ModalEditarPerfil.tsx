@@ -55,22 +55,33 @@ export default function ModalEditarPerfil( {usuario, token}: Props) {
     setLoading(true)
     setErro('')
     try{
-      const res=await fetch('http://localhost:3001/usuarios/${usuario.id}', {
+      const res=await fetch(`http://localhost:3001/usuarios/senha/${usuario.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ senhaAntiga, novaSenha })
+        body: JSON.stringify({ 
+          senha_atual: senhaAntiga,
+          nova_senha: novaSenha
+         })
       })
       if (!res.ok) {        
         const data = await res.json()
         throw new Error(data.message || 'Erro ao alterar a senha')
       }
+      alert('Senha alterada com sucesso')
+      setAba(false)
     } catch (error) {
-      setErro('Erro de conexao')
+      setErro(
+        error instanceof Error ? error.message : 'Erro de conexao'
+      )
+      
     } finally {
+
       setLoading(false)
+      // alert('Senha alterada com sucesso')
+      // setAba(false)
     }
   }
 
@@ -205,7 +216,7 @@ export default function ModalEditarPerfil( {usuario, token}: Props) {
                       />
                     </div>
 
-                    <button className="w-[350px] mt-16 bg-brand-primary text-white rounded-full py-3 text-2xl"
+                    <button className="w-[350px] mt-16 bg-brand-primary text-white rounded-full py-3 text-2xl hover:bg-brand-primaryHover transition cursor-pointer"
                     onClick={AlterarSenha}
                     disabled={loading}
                     // {loading ? 'salvando...' : 'salvar senha'}

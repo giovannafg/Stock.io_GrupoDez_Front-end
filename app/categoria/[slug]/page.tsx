@@ -22,7 +22,7 @@ interface Produto {
 export default async function CategoriaPage({params}:Props){
     const {slug}= await params
 
-    const produtosCategoriaLista=await fetch(`http://localhost:3000/api/produtos/categoria/${slug}`)
+    const produtosCategoriaLista=await fetch(`http://localhost:3001/produtos/categoria/${slug}`)
     .then(res=>res.json())
     console.log(produtosCategoriaLista)
 
@@ -31,7 +31,7 @@ export default async function CategoriaPage({params}:Props){
 
     const produtosDisponiveis = produtosCategoriaLista.filter((produto: Produto) => produto.estoque > 0)
 
-    const subcategorias= await fetch(`http://localhost:3000/api/produtos/subcategorias/${slug}`)
+    const subcategorias= await fetch(`http://localhost:3001/produtos/subcategorias/${slug}`)
     .then(res=>res.json())
 
     // console.log('Subcategorias únicas:', subcategorias)
