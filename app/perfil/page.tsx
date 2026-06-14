@@ -1,5 +1,6 @@
 import Carrossel from '@/components/carrossel.component';
 import IconVoltar from '@/components/icons/iconVoltar.component';
+import ModalAddProduto from '@/components/modals/modalAddProduto';
 import ModalEditarPerfil from '@/components/modals/ModalEditarPerfil';
 import { Navbar } from '@/components/navbar.component';
 import { Link } from 'lucide-react';
@@ -103,9 +104,10 @@ export default async function PerfilPage() {
         <div className="my-18 flex items-center justify-between">
           <h2 className=" text-5xl text-black">Lojas</h2>
           {/* modal de adicionar loja */}
-          <button className="cursor-pointer" >
+          <ModalAddProduto usuario={usuario} token={token}></ModalAddProduto>
+          {/* <button className="cursor-pointer" >
             <img src="\modalAdd.svg" ></img>
-          </button>
+          </button> */}
         </div>
         <div className="flex flex-wrap gap-10">
           {lojasUser.map((loja: Loja) => (
