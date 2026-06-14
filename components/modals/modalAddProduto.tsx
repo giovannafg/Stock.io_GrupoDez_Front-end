@@ -3,40 +3,62 @@
 import { useState } from "react"
 import IconVoltar from "../icons/iconVoltar.component";
 import { Herr_Von_Muellerhoff } from "next/font/google";
+import { srcEmptySsgManifest } from "next/dist/build/webpack/plugins/build-manifest-plugin-utils";
 
-type Props = {
+type Loja = {
+  loja: any
   usuario: any
-  token: string
+  token: any
+  subCategorias: any
 }
 
 
 
-export default function ModalAddProduto( {usuario, token}: Props) {
 
+
+export default function ModalAddProduto( {usuario, token, loja, subCategorias}: Loja ) {
+  // console.log('loja no modal:', loja)
+  // console.log('usuario no modal:', usuario)
+  // console.log('token no modal:', token)
+  console.log('subCategorias no modal:', subCategorias)
+  
   const [open, setOpen] = useState(false)
-  const [nome, setNome] = useState(usuario.nome ?? '')
-  const [userName, setUserName] = useState(usuario.userName ?? '')
-  const [email, setEmail] = useState(usuario.email ?? '')
-  const [aba, setAba]= useState(false)
+  const [aberto,setAberto] = useState(false)
 
-  const [senhaAntiga, setSenhaAntiga] = useState('')
-  const [novaSenha, setNovaSenha] = useState('')
-  const [confirmarSenha, setConfirmarSenha] = useState('')
+
+  const [nomeProduto, setNomeProduto] = useState('')
+  const [subCategoria, setSubCategoria] = useState(null)
+  const [subCategoriaSelecionada, setSubCategoriaSelecionada] = useState(null)
+  const [descricao, setDescricao] = useState('')
+  const [preco, setPreco] = useState('')
+
   const [loading, setLoading] = useState(false)
   const [erro, setErro] = useState('')
 
-  async function Salvar() {
-    console.log(usuario.id, nome, userName, email,token)
+
+  const [estoque, setEstoque] = useState(0)
+
+  function incrementarEstoque() {
+    setEstoque(prev => prev + 1)
+  }
+
+  function decrementarEstoque() {
+    setEstoque(prev => prev > 0 ? prev - 1 : 0)
+  }
+
+  async function adicionarProduto() {
+    console.log(loja.id, nomeProduto, subCategoria, descricao, preco, token)
     setLoading(true)
     setErro('')
     try{
-      const res = await fetch(`http://localhost:3001/usuarios/${usuario.id}`, {
-        method: 'PATCH',
+      const res = await fetch(`http://localhost:3001/produtos/`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ nome, userName, email })
+        body: JSON.stringify({ loja_id: loja.id, categoria_id: Number(subCategoria), nome: nomeProduto, descricao: descricao, preco: preco ,
+           estoque: estoque, imagens: []})
       })
       if (!res.ok) {        
         const data = await res.json()
@@ -45,61 +67,15 @@ export default function ModalAddProduto( {usuario, token}: Props) {
         window.location.reload()
       }
     } catch (error) {
+      console.error('Erro ao adicionar produto:', error)
       setErro('Erro de conexao')
     } finally {
       setLoading(false)
     }
   }
 
-  async function AlterarSenha() {
-    if (novaSenha !== confirmarSenha) return setErro('As senhas não coincidem')
-    setLoading(true)
-    setErro('')
-    try{
-      const res=await fetch(`http://localhost:3001/usuarios/senha/${usuario.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ 
-          senha_atual: senhaAntiga,
-          nova_senha: novaSenha
-         })
-      })
-      if (!res.ok) {        
-        const data = await res.json()
-        throw new Error(data.message || 'Erro ao alterar a senha')
-      }
-      alert('Senha alterada com sucesso')
-      setAba(false)
-    } catch (error) {
-      setErro(
-        error instanceof Error ? error.message : 'Erro de conexao'
-      )
-      
-    } finally {
 
-      setLoading(false)
-      // alert('Senha alterada com sucesso')
-      // setAba(false)
-    }
-  }
 
-  async function DeletarConta() {
-    if (!confirm('Tem certeza que deseja deletar sua conta? Essa ação não pode ser desfeita.')) return
-    const res =await fetch(`http://localhost:3001/usuarios/${usuario.id}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-    })
-    if (res.ok) {
-      window.location.href = '/logout'
-    } else {
-      alert('Erro ao deletar a conta')
-    }
-  }
 
   return (
     <>
@@ -111,10 +87,11 @@ export default function ModalAddProduto( {usuario, token}: Props) {
 
       {open && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-[#EDEDED] h-[600px] w-[700px] rounded-2xl p-8 relative flex flex-col items-center gap-1">
+          
+          <div className="bg-[#EDEDED] h-[800px] w-[700px] rounded-2xl p-8 relative flex flex-col items-center gap-1">
             <button
               onClick={() => setOpen(false)}
-              className="absolute top-7 right-7 text-6xl text-white hover:text-brand-primaryHover transition cursor-pointer"
+              className="absolute top-7 right-7 text-6xl text-white hover:text-brand-primaryHover transition cursor-pointer z-10"
             >
               ✕
             </button>
@@ -130,119 +107,105 @@ export default function ModalAddProduto( {usuario, token}: Props) {
             <div className="relative mt-1 flex gap-5">
               <div>
                 <img src="\retangulo_menor_add_produto.png" className="w-50"></img>
+                <img src="\camera_add_foto.png" className=" absolute top-8 left-15" />
+                <button className="absolute top-18 left-25 text-sm bg-white rounded-full p-1 hover:bg-brand-primaryHover transition cursor-pointer">
+                  <img src="\icone_add_ft.png" alt="mais" />
+                </button>
               </div>
               <div>
                 <img src="\retangulo_menor_add_produto.png" className="w-50"></img>
+                <img src="\camera_add_foto.png" className=" absolute top-8 left-70" />
+                <button className="absolute top-18 left-80 text-sm bg-white rounded-full p-1 hover:bg-brand-primaryHover transition cursor-pointer">
+                  <img src="\icone_add_ft.png" alt="mais" />
+                </button>
               </div>
               <div>
                 <img src="\retangulo_menor_add_produto.png" className="w-50"></img>
+                <img src="\camera_add_foto.png" className=" absolute top-8 left-125" />
+                <button className="absolute top-18 left-135 text-sm bg-white rounded-full p-1 hover:bg-brand-primaryHover transition cursor-pointer">
+                  <img src="\icone_add_ft.png" alt="mais" />
+                </button>
               </div>
             </div>
 
             {erro && <p className="text-red-500 relative absolute top-5 m-0 p-0">{erro}</p>}
  
             {/* Inputs */}
-            <div className="flex flex-col gap-2 w-full items-center mb-10 mt-5">
+            <div className="flex flex-col gap-2 w-full items-center mb-4 mt-4">
               <input
-                onChange={e => setNome(e.target.value)}
+                onChange={e => setNomeProduto(e.target.value)}
                 placeholder="Nome do Produto"
-                className="w-[400px] bg-white rounded-full px-5 py-2 text-gray  outline-none focus:ring-2 focus:ring-brand-primary"
+                className="w-full bg-white rounded-full px-5 py-2 text-gray  outline-none focus:ring-2 focus:ring-brand-primary"
               />
-              <input
-                onChange={e => setUserName(e.target.value)}
+              <div className="relative w-full">
+                <button
+                onClick={() => setAberto(!aberto)}
+                className="w-full bg-white rounded-full px-5 py-2 text-gray  outline-none focus:ring-2 focus:ring-brand-primary flex justify-between items-center"
+                >
+                {subCategoriaSelecionada 
+                ? <h2 className="">{subCategoriaSelecionada}</h2>
+                : <h2 className="text-gray opacity-65">Subcategoria</h2>}
+                <h2 className="text-gray opacity-65">{aberto ? '▲' : '▼'}</h2>
+                
+                </button>
+                {aberto && (
+                  <div className="absolute top-full left-0 z-50 w-full bg-white rounded-lg mt-1 max-h-40 overflow-y-auto shadow-lg">
+                    {subCategorias.map((sc: any) => (
+                      <div
+                        key={sc.nome}
+                        onClick={() => {
+                          setSubCategoria(sc.id);
+                          setSubCategoriaSelecionada(sc.nome);
+                          setAberto(false);
+                        }}
+                        className="p-2 hover:bg-brand-primaryHover cursor-pointer text-gray opacity-65"
+                      >
+                        {sc.nome}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {/* <input
+                onChange={e => setSubCategoria(e.target.value)}
                 placeholder="Subcategoria"
-                className="w-[400px] bg-white rounded-full px-5 py-3 text-gray outline-none focus:ring-2 focus:ring-brand-primary"
-              />
-              <input
-                onChange={e => setEmail(e.target.value)}
+                className="w-full bg-white rounded-full px-5 py-3 text-gray outline-none focus:ring-2 focus:ring-brand-primary"
+              /> */}
+              <textarea
+                onChange={e => setDescricao(e.target.value)}
                 placeholder="Descrição do produto"
-                className="w-[400px] bg-white rounded-full px-5 py-3 text-gray outline-none focus:ring-2 focus:ring-brand-primary"
+                className="w-full min-h-20 resize-none bg-white rounded-4xl px-5 py-3 text-gray outline-none focus:ring-2 focus:ring-brand-primary"
               />
               <input
-                onChange={e => setEmail(e.target.value)}
+                type="number"
+                step="0.01"
+                min="0"
+                onChange={e => setPreco(e.target.value)}
                 placeholder="Preço do produto"
-                className="w-[400px] bg-white rounded-full px-5 py-3 text-gray outline-none focus:ring-2 focus:ring-brand-primary"
+                className="w-full bg-white rounded-full px-5 py-3 text-gray outline-none focus:ring-2 focus:ring-brand-primary"
               />
             </div>
  
             {/* Botões */}
-            <div className="flex flex-col gap-3 w-full items-center">
-              <button className="w-[400px] border border-[#AF052A] text-[#AF052A] text-2xl rounded-full py-2 hover:bg-[#AF052A] hover:text-white transition cursor-pointer"
-              onClick={DeletarConta}>
-                Deletar conta
+            <div className="flex gap-30 w-full justify-center items-center mb-2">
+              <button className="relative cursor-pointer justify-center items-center "
+              onClick={decrementarEstoque}>
+                <h3 className="absolute text-8xl text-brand-primary justify-self-center -top-2 ">-</h3>
+                <img src="/circulo_addProduto.png" className="" />
               </button>
-              <button className="w-[400px] border border-brand-primary text-brand-primary text-2xl rounded-full py-2 hover:bg-brand-primary hover:text-white transition cursor-pointer"
-              onClick={()=>setAba(true)}>
-                Alterar senha
-              </button>
-              {aba && (
-                <div className="fixed inset-0 bg-black/40 z-[60] flex items-center justify-center">
-                  <div className="bg-[#EDEDED] h-[700px] w-[500px] rounded-2xl p-8 relative flex flex-col items-center ">
-
-                    <button
-                      onClick={() => setAba(false)}
-                      className="absolute top-7 right-7 text-6xl text-white hover:text-brand-primaryHover transition cursor-pointer"
-                    >
-                      ✕
-                    </button>
-
-                    <button
-                      onClick={() => setAba(false)}
-                      className="absolute top-5 left-5 text-3xl"
-                    >
-                      <IconVoltar></IconVoltar>
-                    </button>
-
-                    <img
-                      src="\uim_key-skeleton.png"
-                      className="w-40 mt-10"
-                    />
-                    {erro && <p className="text-red-500">{erro}</p>}
-
-                    <div className="flex flex-col gap-5 mt-10 w-full items-center">
-
-                      <input
-                        placeholder="Senha Antiga"
-                        className="w-[350px] bg-white rounded-full px-5 py-3 outline-none"
-                        value={senhaAntiga}
-                        onChange={e => setSenhaAntiga(e.target.value)}
-                        type="password"
-
-                      />
-                      <input
-                        placeholder="Nova Senha"
-                        className="w-[350px] bg-white rounded-full px-5 py-3 outline-none"
-                        value={novaSenha}
-                        onChange={e => setNovaSenha(e.target.value)}
-                        type="password"
-                      />
-                      <input
-                        placeholder="Confirmar Senha"
-                        className="w-[350px] bg-white rounded-full px-5 py-3 outline-none"
-                        value={confirmarSenha}
-                        onChange={e => setConfirmarSenha(e.target.value)}
-                        type="password"
-                      />
-                    </div>
-
-                    <button className="w-[350px] mt-16 bg-brand-primary text-white rounded-full py-3 text-2xl hover:bg-brand-primaryHover transition cursor-pointer"
-                    onClick={AlterarSenha}
-                    disabled={loading}
-                    // {loading ? 'salvando...' : 'salvar senha'}
-                    >
-                      Salvar Senha
-                    </button>
-
-                  </div>
-                </div>
-              )}
-              <button className="w-[400px] bg-brand-primary text-white text-2xl rounded-full py-2 font-medium hover:bg-brand-primaryHover transition cursor-pointer"
-              onClick={Salvar}
-              disabled={loading}>
-                Salvar
+              <h2 className="text-3xl font-bold text-brand-primaryHover">{estoque}</h2>
+              <button className="relative cursor-pointer justify-center items-center"
+              onClick={incrementarEstoque}>
+                <h3 className="absolute text-8xl text-brand-primary justify-self-center">+</h3>
+                <img src="/circulo_addProduto.png" className="" />
               </button>
             </div>
- 
+
+              <button className="w-[400px] bg-brand-primary text-white text-2xl rounded-full py-2 font-medium hover:bg-brand-primaryHover transition cursor-pointer shadow-lg shadow-gray-400"
+              onClick={adicionarProduto}
+              disabled={loading}>
+                Adicionar 
+              </button>
           </div>
         </div>
       )}

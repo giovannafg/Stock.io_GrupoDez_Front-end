@@ -8,6 +8,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 interface Loja {
+  id: number;
   nome: string;
   logo: string;
   categoria: string;
@@ -104,14 +105,14 @@ export default async function PerfilPage() {
         <div className="my-18 flex items-center justify-between">
           <h2 className=" text-5xl text-black">Lojas</h2>
           {/* modal de adicionar loja */}
-          <ModalAddProduto usuario={usuario} token={token}></ModalAddProduto>
-          {/* <button className="cursor-pointer" >
+          {/* <ModalAddProduto usuario={usuario} token={token} subCategorias={subCategorias}></ModalAddProduto> */}
+          <button className="cursor-pointer" >
             <img src="\modalAdd.svg" ></img>
-          </button> */}
+          </button>
         </div>
         <div className="flex flex-wrap gap-10">
           {lojasUser.map((loja: Loja) => (
-            <div key={loja.nome} className="flex items-center justify-between bg-white rounded-2xl p-8 w-[500px]">
+            <a key={loja.nome} href={`/lojas/${loja.id}`} className="flex items-center justify-between bg-white rounded-2xl p-8 w-[500px]">
               <div>
                 <h3 className="font-spartan font-light text-[55.76px]">{loja.nome}</h3>
                 <span className="text-brand-primary font-medium text-[35.15px]">{loja.categoria}</span>
@@ -119,7 +120,7 @@ export default async function PerfilPage() {
               <div className="w-[120px] h-[120px] rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
                 <img src={`/lojas/${loja.logo}`} className="w-full h-full object-contain" />
               </div>
-            </div>
+            </a>
           ))}
         </div>
         <ModalEditarPerfil usuario={usuario} token={token}></ModalEditarPerfil>

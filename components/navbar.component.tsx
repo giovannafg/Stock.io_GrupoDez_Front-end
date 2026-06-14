@@ -8,6 +8,7 @@ export async function Navbar(){
 
     const cookiesStore=await cookies()
     const session=cookiesStore.get('token')?.value ?? null
+    // console.log(session)
 
     return(
         <div className=" top-0 right-0 left-0 bg-black py-2 ">
