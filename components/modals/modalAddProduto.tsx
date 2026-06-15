@@ -20,7 +20,7 @@ export default function ModalAddProduto( {usuario, token, loja, subCategorias}: 
   // console.log('loja no modal:', loja)
   // console.log('usuario no modal:', usuario)
   // console.log('token no modal:', token)
-  console.log('subCategorias no modal:', subCategorias)
+  // console.log('subCategorias no modal:', subCategorias)
   
   const [open, setOpen] = useState(false)
   const [aberto,setAberto] = useState(false)
@@ -31,6 +31,9 @@ export default function ModalAddProduto( {usuario, token, loja, subCategorias}: 
   const [subCategoriaSelecionada, setSubCategoriaSelecionada] = useState(null)
   const [descricao, setDescricao] = useState('')
   const [preco, setPreco] = useState('')
+  const [imagens, setImagens] = useState<string[]>([])
+  const [imagemPreview, setImagemPreview] = useState<(string | null)[]>([null, null, null])
+  const [arquivos, setArquivos] = useState<(File | null)[]>([null, null, null])
 
   const [loading, setLoading] = useState(false)
   const [erro, setErro] = useState('')
@@ -46,8 +49,39 @@ export default function ModalAddProduto( {usuario, token, loja, subCategorias}: 
     setEstoque(prev => prev > 0 ? prev - 1 : 0)
   }
 
+  async function handleImagemChange(e: React.ChangeEvent<HTMLInputElement>, index: number) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const preview=URL.createObjectURL(file)
+    setImagemPreview(prev => {
+      const newPreview = [...prev]
+      newPreview[index] = preview
+      return newPreview
+    })
+
+    // guarda o arquivo pra enviar depois
+    setArquivos(prev => {
+      const novas = [...prev]
+      novas[index] = file
+      return novas
+    })
+  }
+
   async function adicionarProduto() {
-    console.log(loja.id, nomeProduto, subCategoria, descricao, preco, token)
+    // console.log(loja.id, nomeProduto, subCategoria, descricao, preco, token)
+    const urls: string[]=[]
+    for (const arquivo of arquivos){
+      if(!arquivo)continue
+      const formData = new FormData()
+      formData.append('file', arquivo)
+      const res = await fetch('http://localhost:3001/upload/produto', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      })
+      const data = await res.json()
+      urls.push(data.url)
+    }
     setLoading(true)
     setErro('')
     try{
@@ -58,7 +92,7 @@ export default function ModalAddProduto( {usuario, token, loja, subCategorias}: 
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ loja_id: loja.id, categoria_id: Number(subCategoria), nome: nomeProduto, descricao: descricao, preco: preco ,
-           estoque: estoque, imagens: []})
+           estoque: estoque, imagens: urls})
       })
       if (!res.ok) {        
         const data = await res.json()
@@ -95,36 +129,98 @@ export default function ModalAddProduto( {usuario, token, loja, subCategorias}: 
             >
               ✕
             </button>
+             <h2 className="text-4xl text-black mb-5 text-center">Adicionar Produto</h2>
             <div className="relative">
-              <h2 className="text-4xl text-black mb-5 text-center">Adicionar Produto</h2>
+             
+              <input 
+              type="file" 
+              accept="image/*" 
+              className="hidden" 
+              id= "foto-0"
+              onChange={e => handleImagemChange(e, 0)} />
+              {/* se tiver preview mostra a foto, senão mostra o retangulo */}
               <img src="\retangulo_addProduto.png" className="" />
-              <img src="\camera_add_foto.png" className=" absolute top-20 left-70" />
-              <button className="absolute top-30 left-80 text-sm bg-white rounded-full p-1 hover:bg-brand-primaryHover transition cursor-pointer">
-                <img src="\icone_add_ft.png" alt="mais" />
-              </button>
-              <h3 className=" absolute top-40 left-55">Anexe as fotos do seu produto</h3>
+              {imagemPreview[0] && (
+                
+                <img src={imagemPreview[0]} className="w-50 h-[125px] object-cover rounded-xl absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+              ) }
+              
+              <img src="\camera_add_foto.png" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+              
+              {/* label aciona o input ao clicar */}
+              <label htmlFor="foto-0" className="cursor-pointer">
+                <button 
+                  type="button"
+                  className="absolute top-19 left-80 text-sm bg-white rounded-full p-1 hover:bg-brand-primaryHover transition cursor-pointer"
+                  onClick={() => document.getElementById('foto-0')?.click()}
+                >
+                  <img src="\icone_add_ft.png" alt="mais" />
+                </button>
+              </label>
+              
+              <h3 className="absolute top-26 left-55">Anexe as fotos do seu produto</h3>
             </div>
             <div className="relative mt-1 flex gap-5">
               <div>
+                <input
+                type="file" 
+                accept="image/*" 
+                className="hidden" 
+                id= "foto-1"
+                onChange={e => handleImagemChange(e, 1)} />
                 <img src="\retangulo_menor_add_produto.png" className="w-50"></img>
+                {imagemPreview[1] && (
+                
+                <img src={imagemPreview[1]} className="w-50 h-[125px] object-cover rounded-xl absolute z-10 top-1/2 -translate-y-1/2" />
+              ) }
                 <img src="\camera_add_foto.png" className=" absolute top-8 left-15" />
-                <button className="absolute top-18 left-25 text-sm bg-white rounded-full p-1 hover:bg-brand-primaryHover transition cursor-pointer">
-                  <img src="\icone_add_ft.png" alt="mais" />
-                </button>
+                <label htmlFor="foto-1" className="cursor-pointer">
+                  <button className="absolute top-18 left-25 text-sm bg-white rounded-full p-1 hover:bg-brand-primaryHover transition cursor-pointer"
+                  onClick={() => document.getElementById('foto-1')?.click()}>
+                    <img src="\icone_add_ft.png" alt="mais" />
+                  </button>
+                </label>
+                
               </div>
               <div>
+                <input
+                type="file" 
+                accept="image/*" 
+                className="hidden" 
+                id= "foto-2"
+                onChange={e => handleImagemChange(e, 2)} />
                 <img src="\retangulo_menor_add_produto.png" className="w-50"></img>
+                {imagemPreview[2] && (
+                
+                <img src={imagemPreview[2]} className="w-50 h-[125px] object-cover rounded-xl absolute z-10 top-1/2 -translate-y-1/2" />
+                )}
                 <img src="\camera_add_foto.png" className=" absolute top-8 left-70" />
-                <button className="absolute top-18 left-80 text-sm bg-white rounded-full p-1 hover:bg-brand-primaryHover transition cursor-pointer">
-                  <img src="\icone_add_ft.png" alt="mais" />
-                </button>
+                <label htmlFor="foto-2" className="cursor-pointer">
+                  <button className="absolute top-18 left-80 text-sm bg-white rounded-full p-1 hover:bg-brand-primaryHover transition cursor-pointer"
+                  onClick={() => document.getElementById('foto-2')?.click()}>
+                    <img src="\icone_add_ft.png" alt="mais" />
+                  </button>
+                </label>
               </div>
               <div>
+                <input
+                type="file" 
+                accept="image/*" 
+                className="hidden" 
+                id= "foto-3"
+                onChange={e => handleImagemChange(e, 3)} />
                 <img src="\retangulo_menor_add_produto.png" className="w-50"></img>
+                {imagemPreview[3] && (
+                
+                <img src={imagemPreview[3]} className="w-50 h-[125px] object-cover rounded-xl absolute z-10 top-1/2 -translate-y-1/2" />
+                )}
                 <img src="\camera_add_foto.png" className=" absolute top-8 left-125" />
-                <button className="absolute top-18 left-135 text-sm bg-white rounded-full p-1 hover:bg-brand-primaryHover transition cursor-pointer">
-                  <img src="\icone_add_ft.png" alt="mais" />
-                </button>
+                <label htmlFor="foto-2" className="cursor-pointer">
+                  <button className="absolute top-18 left-135 text-sm bg-white rounded-full p-1 hover:bg-brand-primaryHover transition cursor-pointer"
+                  onClick={() => document.getElementById('foto-3')?.click()}>
+                    <img src="\icone_add_ft.png" alt="mais" />
+                  </button>
+                </label>
               </div>
             </div>
 
