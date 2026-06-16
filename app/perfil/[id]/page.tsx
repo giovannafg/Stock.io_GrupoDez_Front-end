@@ -14,24 +14,26 @@ interface Loja {
   categoria: string;
 }
 
-export default async function PerfilPage() {
+export default async function PerfilPage({ params }: { params: Promise<{ id: string }> }) {
+  const {id}= await params
   const cookieStore = await cookies()
   const token = cookieStore.get('token')?.value
 
-  console.log('token:', token)
-  if (!token) redirect('/login')
+  // console.log('token:', token)
+  // if (!token) redirect('/login')
 
-  const res = await fetch('http://localhost:3001/perfil', {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-  
-  if (!res.ok) {
-    const text = await res.text()
-    console.log('status:', res.status)
-    console.log('resposta:', text)}
-
+  const res = await fetch(`http://localhost:3001/perfil/${id}`)
+  if (!res.ok) redirect('/')
   const usuario = await res.json()
-  // console.log('usuario:', usuario)
+  
+  const ehDono = token ? await verificarDono(token, Number(id)) : false
+
+  // if (!res.ok) {
+  //   const text = await res.text()
+  //   console.log('status:', res.status)
+  //   console.log('resposta:', text)}
+
+
   
   const usuarioId = usuario.id
   const lojasUser = await fetch(`http://localhost:3001/lojas/usuario/${usuarioId}`)
@@ -123,9 +125,21 @@ export default async function PerfilPage() {
             </a>
           ))}
         </div>
-        <ModalEditarPerfil usuario={usuario} token={token}></ModalEditarPerfil>
+        {ehDono && <ModalEditarPerfil usuario={usuario} token={token}></ModalEditarPerfil>}
       </div>
     </main>
   )
 }
 
+async function verificarDono(token: string, id: number): Promise<boolean> {
+  try {
+    const res = await fetch('http://localhost:3001/perfil', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    if (!res.ok) return false
+    const usuario = await res.json()
+    return usuario.id === id
+  } catch {
+    return false
+  }
+}

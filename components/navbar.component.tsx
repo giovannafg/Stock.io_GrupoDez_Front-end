@@ -3,6 +3,7 @@ import PersonIcon from '@/components/icons/iconeLogado.component'
 import iconLogout from '@/components/icons/iconLogout.component'
 import IconLogout from "@/components/icons/iconLogout.component";
 import { cookies, headers } from "next/headers";
+import { tokenizeArgs } from "next/dist/server/lib/utils";
 
 export async function Navbar(){
 
@@ -10,6 +11,13 @@ export async function Navbar(){
     const session=cookiesStore.get('token')?.value ?? null
     // console.log(session)
 
+    let userId = null
+    if (session) {
+        const payload = JSON.parse(
+        Buffer.from(session.split('.')[1], 'base64').toString()
+        )
+        userId = payload.sub
+    }
     return(
         <div className=" top-0 right-0 left-0 bg-black py-2 ">
            <div className=" flex items-center justify-between px-20 py-3">
@@ -18,7 +26,7 @@ export async function Navbar(){
                 </Link>
             {session ? (
                 <div className="flex items-center gap-15">
-                    <Link href="/perfil">
+                    <Link href={`/perfil/${userId}`}>
                         <PersonIcon></PersonIcon>
                     </Link>
                     
