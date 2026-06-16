@@ -139,10 +139,10 @@ export default function ProdutosGrid({ subcategorias, produtosIniciais }: Props)
             className=" h-[320px] w-[28vh] bg-white rounded-2xl flex flex-col relative hover:scale-101 transition cursor-pointer overflow-hidden"
           >
             <div className="absolute top-4 right-4 z-10">
-              <img src={`/lojas/${produto.loja_logo}`} className="w-[70px] object-contain" />
+              <img src={`http://localhost:3001${produto.loja_logo}`} className="w-[70px] object-contain" />
             </div>
             <div className="flex justify-center items-center h-[160px]">
-              <img src={`/produtos/${produto.imagem}`} className="w-[180px]" />
+              <img src={`http://localhost:3001${produto.imagem}`} className="w-[180px]" />
             </div>
             <div className="mt-6">
               <h3 className="text-3xl font-semibold px-5">{produto.nome}</h3>

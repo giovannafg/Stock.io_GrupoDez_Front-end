@@ -69,7 +69,7 @@ export default async function PerfilPage({ params }: { params: Promise<{ id: str
             <div className="w-[200px] h-[200px] rounded-full overflow-hidden shadow-lg">
               {usuario.foto_perfil_url ? (
                 <img
-                  src={usuario.foto_perfil_url}
+                  src={`http://localhost:3001${usuario.foto_perfil_url}`}
                   alt={usuario.nome}
                   className="w-full h-full object-cover"
                 />
@@ -92,6 +92,7 @@ export default async function PerfilPage({ params }: { params: Promise<{ id: str
             <p className="text-gray-500 flex items-center text-2xl gap-2 mt-1 mx-28">
               <span>✉</span>{usuario.email}
             </p>
+            {/* <p>{usuario.foto_perfil_url}</p> */}
           </div>
 
           

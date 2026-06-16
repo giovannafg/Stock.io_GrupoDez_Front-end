@@ -33,7 +33,7 @@ export default function Carrossel({ title, items }: Props) {
               className="min-w-[230px] h-[340px] bg-white rounded-2xl flex flex-col relative hover:scale-101 transition cursor-pointer"
             >
               <div className="absolute top-4 right-4 z-10">
-                <img src={`/lojas/${produto.loja_logo}`} className="w-[70px] object-contain" />
+                <img src={`http://localhost:3001${produto.loja_logo}`} className="w-[70px] object-contain" />
               </div>
               <div className="flex justify-center items-center h-[160px]">
                 {/* <h2>{produto.imagem}</h2> */}

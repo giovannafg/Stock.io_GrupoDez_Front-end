@@ -31,7 +31,7 @@ export default function LojaCarrossel({ title, items }: Props , ) {
               className=" flex flex-col items-center hover:scale-101 transition cursor-pointer "
             >
               <div className="">
-                <img src={`/lojas/${loja.logo}`} className="w-[125px] object-contain" />
+                <img src={`http://localhost:3001${loja.logo}`} className="w-[125px] object-contain" />
               </div>
               <div>
                 <h3 className="mt-1 text-[20px] text-white">

@@ -17,6 +17,7 @@ export default function ModalEditarPerfil( {usuario, token}: Props) {
   const [userName, setUserName] = useState(usuario.userName ?? '')
   const [email, setEmail] = useState(usuario.email ?? '')
   const [aba, setAba]= useState(false)
+  const [fotoPerfil, setFotoPerfil] = useState<File | null>(null)
 
   const [senhaAntiga, setSenhaAntiga] = useState('')
   const [novaSenha, setNovaSenha] = useState('')
@@ -24,19 +25,40 @@ export default function ModalEditarPerfil( {usuario, token}: Props) {
   const [loading, setLoading] = useState(false)
   const [erro, setErro] = useState('')
 
+  function handleFotoPerfil(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setFotoPerfil(file)
+  }
+
   async function Salvar() {
     console.log(usuario.id, nome, userName, email,token)
     setLoading(true)
     setErro('')
     try{
+      let foto_perfil_url=usuario.foto_perfil_url
+
+      if(fotoPerfil){
+        const formData = new FormData()
+        formData.append('file', fotoPerfil)
+        const resUpload = await fetch('http://localhost:3001/upload/foto-perfil', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData
+        })
+        const data = await resUpload.json()
+        foto_perfil_url = data.url
+      }
+
       const res = await fetch(`http://localhost:3001/usuarios/${usuario.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ nome, userName, email })
-      })
+        body: JSON.stringify({ nome, userName, email, foto_perfil_url })
+      }
+    )
       if (!res.ok) {        
         const data = await res.json()
         throw new Error(data.message || 'Erro ao salvar as alterações')
@@ -127,9 +149,18 @@ export default function ModalEditarPerfil( {usuario, token}: Props) {
                   </div>
                 )}
               </div>
-              <button className="absolute bottom-[-20] right-18 bg-white rounded-full h-13 w-13 flex items-center justify-center text-sm hover:bg-gray-800 transition">
-                <img src="/camera.png"></img>
-              </button>
+              <input
+                type="file" 
+                accept="image/*" 
+                className="hidden" 
+                id= "foto-perfil"
+                onChange={handleFotoPerfil} />
+              <label htmlFor="foto-1" className="cursor-pointer">
+                <button className="absolute bottom-[-20] right-18 bg-white rounded-full h-13 w-13 flex items-center justify-center text-sm hover:bg-gray-800 transition"
+                onClick={() => document.getElementById('foto-perfil')?.click()}>
+                  <img src="/camera.png"></img>
+                </button>
+              </label>
             </div>
 
             {erro && <p className="text-red-500 relative absolute top-5 m-0 p-0">{erro}</p>}

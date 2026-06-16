@@ -40,8 +40,9 @@ function LojaCarrossel({ items }: LojaCarrosselProps) {
             key={loja.nome}
             className="flex flex-col items-center hover:scale-101 transition cursor-pointer"
           >
-            <div>
-              <img src={`lojas/${loja.logo}`} className="w-[125px] object-contain" />
+            <div  className="w-[130px] h-[130px] flex items-center justify-center">
+              <img src={`http://localhost:3001${loja.logo}`} 
+              className="max-w-full max-h-full object-contain" />
             </div>
             <h3 className="mt-1 text-[20px]">{loja.nome}</h3>
             <h3 className="text-brand-primary">{loja.categoria}</h3>
