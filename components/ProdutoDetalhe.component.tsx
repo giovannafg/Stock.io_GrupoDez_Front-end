@@ -129,7 +129,14 @@ export default function ProdutoDetalhe({ produto, podeEditar, token, subCategori
 
           {produto.loja?.nome && (
             <p className="mt-10 text-lg text-black/70">
-              vendido por <span className="font-semibold text-brand-primary">{produto.loja.nome}</span>
+              vendido por{" "}
+              {produto.loja_id ? (
+                <Link href={`/lojas/${produto.loja_id}`} className="font-semibold text-brand-primary transition hover:text-brand-primaryHover hover:underline">
+                  {produto.loja.nome}
+                </Link>
+              ) : (
+                <span className="font-semibold text-brand-primary">{produto.loja.nome}</span>
+              )}
             </p>
           )}
         </aside>
@@ -165,8 +172,10 @@ export default function ProdutoDetalhe({ produto, podeEditar, token, subCategori
                       )}
                     </div>
 
-                    <h3 className="mt-5 line-clamp-2 text-3xl font-semibold leading-none text-black">{item.nome}</h3>
-                    <p className="mt-3 text-2xl text-black">{formatarPreco(item.preco)}</p>
+                    <h3 className="mt-5 min-h-[60px] overflow-hidden text-[28px] font-semibold leading-none text-black [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">
+                      {item.nome}
+                    </h3>
+                    <p className="mt-2 text-2xl leading-none text-black">{formatarPreco(item.preco)}</p>
                     <span className={item.estoque > 0 ? "mt-1 text-lg font-semibold text-[#A6D800]" : "mt-1 text-lg font-semibold text-[#AF052A]"}>
                       {item.estoque > 0 ? "DISPONIVEL" : "INDISPONIVEL"}
                     </span>

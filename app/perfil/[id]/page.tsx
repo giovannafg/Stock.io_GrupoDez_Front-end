@@ -1,9 +1,7 @@
 import Carrossel from '@/components/carrossel.component';
-import IconVoltar from '@/components/icons/iconVoltar.component';
-import ModalAddProduto from '@/components/modals/modalAddProduto';
+import ModalLoja from '@/components/modals/ModalLoja';
 import ModalEditarPerfil from '@/components/modals/ModalEditarPerfil';
 import { Navbar } from '@/components/navbar.component';
-import { Link } from 'lucide-react';
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
@@ -41,6 +39,10 @@ export default async function PerfilPage({ params }: { params: Promise<{ id: str
   .catch(() => [])
 
   const produtosUser = await fetch(`http://localhost:3001/produtos/usuario/${usuarioId}`)
+  .then(res => res.ok ? res.json() : [])
+  .catch(() => [])
+
+  const categorias = await fetch('http://localhost:3001/categorias')
   .then(res => res.ok ? res.json() : [])
   .catch(() => [])
 
@@ -107,11 +109,7 @@ export default async function PerfilPage({ params }: { params: Promise<{ id: str
         </div>
         <div className="my-18 flex items-center justify-between">
           <h2 className=" text-5xl text-black">Lojas</h2>
-          {/* modal de adicionar loja */}
-          {/* <ModalAddProduto usuario={usuario} token={token} subCategorias={subCategorias}></ModalAddProduto> */}
-          <button className="cursor-pointer" >
-            <img src="\modalAdd.svg" ></img>
-          </button>
+          {ehDono && token && <ModalLoja modo="criar" token={token} categorias={categorias} />}
         </div>
         <div className="flex flex-wrap gap-10">
           {lojasUser.map((loja: Loja) => (
@@ -121,7 +119,7 @@ export default async function PerfilPage({ params }: { params: Promise<{ id: str
                 <span className="text-brand-primary font-medium text-[35.15px]">{loja.categoria}</span>
               </div>
               <div className="w-[120px] h-[120px] rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                <img src={`/lojas/${loja.logo}`} className="w-full h-full object-contain" />
+                {loja.logo && <img src={`http://localhost:3001${loja.logo}`} className="w-full h-full object-contain" />}
               </div>
             </a>
           ))}

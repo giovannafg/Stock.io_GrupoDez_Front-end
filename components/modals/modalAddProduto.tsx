@@ -113,10 +113,10 @@ export default function ModalAddProduto( {usuario, token, loja, subCategorias}: 
 
   return (
     <>
-        <button className="cursor-pointer"
+        <button className="flex h-[45px] w-[45px] cursor-pointer items-center justify-center"
         onClick={() => setOpen(true)}
         >
-            <img src="\modalAdd.svg" ></img>
+            <img src="\modalAdd.svg" className="h-full w-full" ></img>
         </button>   
 
       {open && (

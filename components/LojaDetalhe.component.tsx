@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import ModalAddProduto from "@/components/modals/modalAddProduto";
+import ModalLoja from "@/components/modals/ModalLoja";
 
 interface Loja {
   id: number;
   nome: string;
+  categoria_id?: number;
   categoria?: string;
   descricao?: string | null;
   logo?: string | null;
@@ -38,6 +41,10 @@ interface Produto {
 interface Props {
   loja: Loja;
   produtos: Produto[];
+  token: string | null;
+  podeEditar: boolean;
+  categorias: { id: number; nome: string; categoria_pai_id?: number | null }[];
+  subCategorias: { id: number; nome: string }[];
 }
 
 const PRODUTOS_POR_PAGINA = 10;
@@ -54,7 +61,7 @@ function formatarPreco(preco: number | string) {
   }).format(Number(preco));
 }
 
-export default function LojaDetalhe({ loja, produtos }: Props) {
+export default function LojaDetalhe({ loja, produtos, token, podeEditar, categorias, subCategorias }: Props) {
   const [pagina, setPagina] = useState(1);
   const totalPaginas = Math.max(1, Math.ceil(produtos.length / PRODUTOS_POR_PAGINA));
   const produtosPagina = produtos.slice((pagina - 1) * PRODUTOS_POR_PAGINA, pagina * PRODUTOS_POR_PAGINA);
@@ -73,6 +80,13 @@ export default function LojaDetalhe({ loja, produtos }: Props) {
         <div className="absolute inset-0 bg-black/55" />
 
         <div className="relative z-10 mx-auto flex h-full max-w-[1500px] items-center justify-center px-16">
+          {podeEditar && token && (
+            <div className="absolute right-16 top-16 flex flex-col items-center gap-4">
+              <ModalLoja modo="editar" token={token} categorias={categorias} loja={loja} />
+              <ModalAddProduto usuario={loja.usuario} token={token} loja={loja} subCategorias={subCategorias} />
+            </div>
+          )}
+
           <div>
             <h1 className="text-[92px] font-semibold leading-none text-white">{loja.nome}</h1>
             {loja.categoria && <p className="text-4xl font-light lowercase text-white">{loja.categoria}</p>}
@@ -105,9 +119,9 @@ export default function LojaDetalhe({ loja, produtos }: Props) {
                 <Link
                   key={produto.id}
                   href={`/produto/${produto.id}`}
-                  className="relative flex h-[335px] flex-col rounded-[32px] bg-white px-6 py-6 transition hover:scale-[1.02]"
+                  className="relative flex h-[360px] flex-col rounded-[32px] bg-white px-6 py-6 transition hover:scale-[1.02]"
                 >
-                  <div className="flex h-[175px] items-center justify-center">
+                  <div className="flex h-[165px] items-center justify-center">
                     {imagem ? (
                       <img src={apiUrl(imagem)} alt={produto.nome} className="h-full w-full object-contain" />
                     ) : (
@@ -115,8 +129,10 @@ export default function LojaDetalhe({ loja, produtos }: Props) {
                     )}
                   </div>
 
-                  <h3 className="mt-4 line-clamp-2 text-3xl font-semibold leading-none text-black">{produto.nome}</h3>
-                  <p className="mt-2 text-3xl text-black">{formatarPreco(produto.preco)}</p>
+                  <h3 className="mt-5 min-h-[72px] overflow-hidden text-3xl font-semibold leading-none text-black [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">
+                    {produto.nome}
+                  </h3>
+                  <p className="mt-2 text-3xl leading-none text-black">{formatarPreco(produto.preco)}</p>
                   <span className={produto.estoque > 0 ? "mt-1 text-lg font-semibold text-[#A6D800]" : "mt-1 text-lg font-semibold text-[#AF052A]"}>
                     {produto.estoque > 0 ? "DISPONIVEL" : "INDISPONIVEL"}
                   </span>
