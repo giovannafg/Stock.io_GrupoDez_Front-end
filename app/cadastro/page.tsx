@@ -59,7 +59,7 @@ export default function Cadastro() {
       }
 
       setMensagem('Cadastro realizado com sucesso! Redirecionando para login...');
-      setTimeout(() => router.push('/'), 800);
+      setTimeout(() => router.push('/login'), 800);
     } catch (error) {
       setMensagem(error instanceof Error ? error.message : String(error));
     } finally {
@@ -229,7 +229,7 @@ export default function Cadastro() {
 
           <div className="mt-8 text-left text-sm xl:text-base text-gray-300">
             Já possui uma conta?{' '}
-            <Link href="/" className="text-brand-purple font-bold hover:underline underline-offset-4">
+            <Link href="/login" className="text-brand-purple font-bold hover:underline underline-offset-4">
               Login
             </Link>
           </div>
