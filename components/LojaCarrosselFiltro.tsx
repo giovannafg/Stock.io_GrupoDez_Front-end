@@ -22,6 +22,7 @@ interface LojaCarrosselProps {
 }
 
 interface loja {
+  id: number
   nome: string
   logo: string
   categoria: string
@@ -36,7 +37,7 @@ function LojaCarrossel({ items }: LojaCarrosselProps) {
       <div className="flex gap-15 pb-5">
         {items.map((loja) => (
           <Link
-            href="#"
+            href={`/lojas/${loja.id}`}
             key={loja.nome}
             className="flex flex-col items-center hover:scale-101 transition cursor-pointer"
           >
