@@ -4,6 +4,7 @@ import LojasSection from "@/components/LojaCarrosselFiltro";
 import Filtros from "@/components/LojaCarrosselFiltro";
 import LojaCarrossel from "@/components/lojasCarrossel.component";
 import { Navbar } from "@/components/navbar.component";
+import SearchBar from "@/components/SearchBar.component";
 import Link from "next/link";
 
 
@@ -95,14 +96,7 @@ export default async function  home(){
                 <div className="px-20 py-10">
                     {/* Procurar */}
                     <section className="pt-2 flex justify-end ">
-                        <div className="bg-white rounded-full w-[700px] h-[45px] items-center px-7 flex justify-between">
-                            <input type="text"
-                            placeholder="Procurar por..."
-                            className="text-brand-primary text-2xl outline-none"></input>
-                            <div className="">
-                                <img src="Lupa.png" className="w-5"></img>
-                            </div>
-                        </div>
+                        <SearchBar />
                     </section>
                     {/* Categorias */}
                     <section className="flex flex-col mt-10">

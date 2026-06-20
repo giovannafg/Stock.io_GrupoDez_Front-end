@@ -32,6 +32,7 @@ interface Subcategoria {
 interface Props {
   subcategorias: Subcategoria[]
   produtosIniciais: Produto[]
+  subcategoriaInicial?: string
 }
 
 function ordenarProdutos(produtos: Produto[], ordem: string): Produto[] {
@@ -43,8 +44,8 @@ function ordenarProdutos(produtos: Produto[], ordem: string): Produto[] {
   }
 }
 
-export default function ProdutosGrid({ subcategorias, produtosIniciais }: Props) {
-  const [subcategoria, setSubcategoria] = useState('Todos')
+export default function ProdutosGrid({ subcategorias, produtosIniciais, subcategoriaInicial }: Props) {
+  const [subcategoria, setSubcategoria] = useState(subcategoriaInicial || 'Todos')
   const [ordenacao, setOrdenacao] = useState('')
   const [ordenacaoAberta, setOrdenacaoAberta] = useState(false)
   const [pagina, setPagina] = useState(1)

@@ -3,9 +3,11 @@ import Carrossel from "@/components/carrossel.component";
 import LojaCarrossel from "@/components/lojasCarrossel.component";
 import { Navbar } from "@/components/navbar.component";
 import ProdutosGrid from '@/components/ProdutosGrid.component';
+import SearchBar from "@/components/SearchBar.component";
 
 interface Props {
     params: {slug:string}
+    searchParams?: Promise<{ subcategoria?: string }>
 }
 
 interface Produto {
@@ -19,8 +21,10 @@ interface Produto {
 }
 
 
-export default async function CategoriaPage({params}:Props){
+export default async function CategoriaPage({params, searchParams}:Props){
     const {slug}= await params
+    const query = searchParams ? await searchParams : {}
+    const subcategoriaInicial = query.subcategoria ? decodeURIComponent(query.subcategoria) : undefined
 
     const produtosCategoriaLista=await fetch(`http://localhost:3001/produtos/categoria/${slug}`)
     .then(res=>res.json())
@@ -68,18 +72,11 @@ export default async function CategoriaPage({params}:Props){
                     <div className="px-20 py-10">
                     {/* Procurar */}
                         <section className="pt-2 flex justify-end ">
-                            <div className="bg-white rounded-full w-[700px] h-[45px] items-center px-7 flex justify-between">
-                                <input type="text"
-                                placeholder="Procurar por..."
-                                className="text-brand-primary text-2xl outline-none"></input>
-                                <div className="">
-                                    <img src="/Lupa.png" className="w-5"></img>
-                                </div>
-                            </div>
+                            <SearchBar categoriaAtual={slug} subcategoriaAtual={subcategoriaInicial} />
                         </section>
                         {/* Tipos e as abas de produtos */}
                         <section className="mt-4">
-                            <ProdutosGrid subcategorias={subcategorias} produtosIniciais={produtosCategoriaLista}></ProdutosGrid>
+                            <ProdutosGrid subcategorias={subcategorias} produtosIniciais={produtosCategoriaLista} subcategoriaInicial={subcategoriaInicial}></ProdutosGrid>
                         </section>
                     </div>    
                 </div>
