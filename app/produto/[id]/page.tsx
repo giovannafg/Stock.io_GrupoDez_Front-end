@@ -9,6 +9,7 @@ interface Props {
 
 interface Produto {
   id: number;
+  loja_id?: number;
   nome: string;
   descricao?: string | null;
   preco: number | string;
@@ -63,11 +64,23 @@ export default async function ProdutoPage({ params }: Props) {
         .then((res) => (res.ok ? res.json() : []))
         .catch(() => [])
     : [];
+  const produtosMesmaLoja: Produto[] = produto.loja_id
+    ? await fetch(`http://localhost:3001/produtos/loja/${produto.loja_id}`)
+        .then((res) => (res.ok ? res.json() : []))
+        .then((produtos: Produto[]) => produtos.filter((item) => item.id !== produto.id))
+        .catch(() => [])
+    : [];
 
   return (
-    <main className="min-h-screen bg-brand-bg">
+    <main className="min-h-screen bg-brand-bg [font-family:var(--font-league-spartan)]">
       <Navbar />
-      <ProdutoDetalhe produto={produto} podeEditar={podeEditar} token={token} subCategorias={subCategorias} />
+      <ProdutoDetalhe
+        produto={produto}
+        podeEditar={podeEditar}
+        token={token}
+        subCategorias={subCategorias}
+        produtosMesmaLoja={produtosMesmaLoja}
+      />
     </main>
   );
 }
