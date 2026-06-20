@@ -103,9 +103,9 @@ export default async function  home(){
                         <h2 className=" text-5xl mb-10 text-black">
                             Categoria
                         </h2>
-                        <div className="flex gap-8">
+                        <div className="grid grid-cols-8 gap-6">
                         {categorias.map((categoria)=>(
-                            <Link key={categoria.nome} href={`/categoria/${categoria.value}`} className="bg-white h-[130px] w-[130px] hover:scale-105 transition cursor-pointer rounded-[35px] flex flex-col items-center justify-center gap-2">
+                            <Link key={categoria.nome} href={`/categoria/${categoria.value}`} className="bg-white h-[130px] w-full hover:scale-105 transition cursor-pointer rounded-[35px] flex flex-col items-center justify-center gap-2">
                                 {/* <div className="bg-white h-[120px] w-[120px] rounded-[35px] flex flex-col items-center justify-center gap-2"> */}
                                     <img src={categoria.imagem}></img>
                                     <p>{categoria.nome}</p>
