@@ -28,7 +28,7 @@ export default function Carrossel({ title, items }: Props) {
         <div className="flex gap-8 pb-5">
           {items.map((produto) => (
             <Link
-              href="#"
+              href={`/produto/${produto.id}`}
               key={produto.nome}
               className="min-w-[230px] h-[340px] bg-white rounded-2xl flex flex-col relative hover:scale-101 transition cursor-pointer"
             >
