@@ -1,6 +1,7 @@
 'use client'
 
 import useEmblaCarousel from 'embla-carousel-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 
 interface loja {
@@ -16,8 +17,8 @@ interface Props {
   items: loja[]
 }
 
-export default function LojaCarrossel({ title, items }: Props , ) {
-  const [emblaRef] = useEmblaCarousel({ dragFree: true })
+export default function LojaCarrossel({ items }: Props , ) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ dragFree: true })
 
   return (
 
@@ -46,6 +47,26 @@ export default function LojaCarrossel({ title, items }: Props , ) {
           ))}
         </div>
       </div>
+      {items.length > 0 && (
+        <div className="mt-4 flex justify-center gap-4">
+          <button
+            type="button"
+            aria-label="Lojas anteriores"
+            onClick={() => emblaApi?.scrollPrev()}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-brand-primary shadow transition hover:bg-brand-primary hover:text-white"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <button
+            type="button"
+            aria-label="Proximas lojas"
+            onClick={() => emblaApi?.scrollNext()}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-brand-primary shadow transition hover:bg-brand-primary hover:text-white"
+          >
+            <ChevronRight size={24} />
+          </button>
+        </div>
+      )}
     </section>
   )
 }

@@ -1,11 +1,10 @@
 // components/lojas-section.component.tsx
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useState as useCarouselState } from 'react'
+import { useState } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
 import Link from 'next/link'
-import { ChevronUp } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react'
 
 const categorias = [
   "Mercado",
@@ -30,26 +29,48 @@ interface loja {
 
 // Carrossel
 function LojaCarrossel({ items }: LojaCarrosselProps) {
-  const [emblaRef] = useEmblaCarousel({ dragFree: true })
+  const [emblaRef, emblaApi] = useEmblaCarousel({ dragFree: true })
 
   return (
-    <div className="overflow-hidden" ref={emblaRef}>
-      <div className="flex gap-15 pb-5">
-        {items.map((loja) => (
-          <Link
-            href={`/lojas/${loja.id}`}
-            key={loja.nome}
-            className="flex flex-col items-center hover:scale-101 transition cursor-pointer"
-          >
-            <div  className="w-[130px] h-[130px] flex items-center justify-center">
-              <img src={`http://localhost:3001${loja.logo}`} 
-              className="max-w-full max-h-full object-contain" />
-            </div>
-            <h3 className="mt-1 text-[20px]">{loja.nome}</h3>
-            <h3 className="text-brand-primary">{loja.categoria}</h3>
-          </Link>
-        ))}
+    <div>
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex gap-15 pb-5">
+          {items.map((loja) => (
+            <Link
+              href={`/lojas/${loja.id}`}
+              key={loja.nome}
+              className="flex flex-col items-center hover:scale-101 transition cursor-pointer"
+            >
+              <div  className="w-[130px] h-[130px] flex items-center justify-center">
+                <img src={`http://localhost:3001${loja.logo}`} 
+                className="max-w-full max-h-full object-contain" />
+              </div>
+              <h3 className="mt-1 text-[20px]">{loja.nome}</h3>
+              <h3 className="text-brand-primary">{loja.categoria}</h3>
+            </Link>
+          ))}
+        </div>
       </div>
+      {items.length > 0 && (
+        <div className="mt-4 flex justify-center gap-4">
+          <button
+            type="button"
+            aria-label="Lojas anteriores"
+            onClick={() => emblaApi?.scrollPrev()}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-brand-primary shadow transition hover:bg-brand-primary hover:text-white"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <button
+            type="button"
+            aria-label="Proximas lojas"
+            onClick={() => emblaApi?.scrollNext()}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-brand-primary shadow transition hover:bg-brand-primary hover:text-white"
+          >
+            <ChevronRight size={24} />
+          </button>
+        </div>
+      )}
     </div>
   )
 }
